@@ -1,20 +1,43 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import Landing1 from "./src/LandingPage/Landing1";
+import Landing2 from "./src/LandingPage/Landing2";
+
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+import { config, closeConfig } from "./hooks/animation";
 
 export default function App() {
+  const Stack = createNativeStackNavigator();
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          gestureEnabled: true,
+          gestureDirection: "horizontal",
+          transitionSpec: {
+            open: config,
+            close: closeConfig,
+          },
+        }}
+        headerMode="float"
+        animation="fade"
+      >
+        <Stack.Screen
+          name="Landing1"
+          component={Landing1} 
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Landing2"
+          component={Landing2} 
+          options={{
+            headerShown: false,
+          }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
