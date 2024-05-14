@@ -3,8 +3,10 @@ import { Text, View } from "react-native";
 
 export default function Cart() {
   return (
-    <View>
-      <Text>Cart</Text>
+    <View className="h-screen items-center justify-center">
+      <View className="">
+        <Text>Cart</Text>
+      </View>
     </View>
   );
 }
