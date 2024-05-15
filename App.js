@@ -1,5 +1,6 @@
 import Landing1 from "./src/LandingPage/Landing1";
 import Landing2 from "./src/LandingPage/Landing2";
+import History from "./src/Tab/History";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -23,7 +24,7 @@ export default function App() {
         headerMode="float"
         animation="fade"
       >
-        <Stack.Screen
+        {/* <Stack.Screen
           name="Landing1"
           component={Landing1} 
           options={{
@@ -33,6 +34,13 @@ export default function App() {
         <Stack.Screen
           name="Landing2"
           component={Landing2} 
+          options={{
+            headerShown: false,
+          }}
+        /> */}
+        <Stack.Screen
+          name="History"
+          component={History} 
           options={{
             headerShown: false,
           }}
