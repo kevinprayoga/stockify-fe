@@ -1,8 +1,6 @@
 import React from "react";
-import { ScrollView, Text, TextInput, Touchable, TouchableOpacity, View } from "react-native";
-import { MaterialIcons } from '@expo/vector-icons';
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { Octicons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 
 export default function Order() {

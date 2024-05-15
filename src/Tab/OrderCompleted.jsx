@@ -1,8 +1,5 @@
 import React from "react";
-import { ScrollView, Text, TextInput, Touchable, TouchableOpacity, View, Image } from "react-native";
-import { MaterialIcons } from '@expo/vector-icons';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { Octicons } from '@expo/vector-icons';
+import { Text, TouchableOpacity, View, Image } from "react-native";
 import { images } from "../../constants";
 import { useFonts } from 'expo-font';
 
