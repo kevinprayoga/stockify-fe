@@ -1,6 +1,7 @@
 import Landing1 from "./src/LandingPage/Landing1";
 import Landing2 from "./src/LandingPage/Landing2";
 import Order from "./src/Tab/Order";
+import OrderCompleted from "./src/Tab/OrderCompleted";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -39,8 +40,8 @@ export default function App() {
           }}
         /> */}
         <Stack.Screen
-          name="Order"
-          component={Order} 
+          name="OrderCompleted"
+          component={OrderCompleted} 
           options={{
             headerShown: false,
           }}

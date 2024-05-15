@@ -1,16 +1,15 @@
 import React from "react";
 import { ScrollView, Text, TextInput, Touchable, TouchableOpacity, View } from "react-native";
-// import { ScrollView } from "react-native-reanimated/lib/typescript/Animated";
 import { MaterialIcons } from '@expo/vector-icons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { Octicons } from '@expo/vector-icons';
 
-export default function Cart() {
+export default function Order() {
   return (
     <View>
         <ScrollView className="mt-[30] h-screen bg-[#F5F6F7]">
             <View className="items-center mt-[30]">
-                <Text className="text-xl">Order Cart</Text>
+                <Text className="text-xl font-bold">Check Out</Text>
             </View>
             <View className="bottom-[25]">
                 <TouchableOpacity className="ml-[27] w-[30px] h-[30px] bg-[#5A4DF3] rounded-full items-center justify-center">
@@ -79,7 +78,7 @@ export default function Cart() {
                 </View>
             </View>
             {/* Order Button */}
-            <View className="mx-[27] mt-[15]">
+            <View className="mx-[27] mt-[30]">
                 <TouchableOpacity className="bg-[#5A4DF3] h-[50] rounded-xl items-center justify-center">
                     <Text className="text-xl font-bold text-white">Pesan</Text>
                 </TouchableOpacity>
