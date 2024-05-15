@@ -40,7 +40,7 @@ export default function History() {
         </View>
         <View>
           {/* Box Selesai */}
-          <View className="mx-[27] bg-white mt-[15] rounded-lg p-[15]">
+          <View className="mx-[27] bg-white mt-[15] rounded-lg p-[15] shadow">
             <View className="flex-row justify-between items-center border-b border-gray-200 pb-[8]">
               <Text className="text-lg font-bold">#0376</Text>
               <Text className="text-[13px] text-gray-400">20/03/2024</Text>
@@ -64,7 +64,7 @@ export default function History() {
           </View>
 
           {/* Box Batal */}
-          <View className="mx-[27] bg-white mt-[15] rounded-lg p-[15]">
+          <View className="mx-[27] bg-white mt-[15] rounded-lg p-[15] shadow">
             <View className="flex-row justify-between items-center border-b border-gray-200 pb-[8]">
               <Text className="text-lg font-bold">#0376</Text>
               <Text className="text-[13px] text-gray-400">20/03/2024</Text>
