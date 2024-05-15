@@ -8,16 +8,21 @@ export default function HistoryDetail() {
   return (
     <View className="bg-[#F5F6F7]">
       <ScrollView className="mt-[30] h-screen bg-[#F5F6F7]">
+        {/* Page Title */}
         <View className="items-center mt-[30]">
             <Text className="text-xl font-bold">Detail Transaksi</Text>
         </View>
+
+        {/* Back Button */}
         <View className="absolute mt-[30]">
             <TouchableOpacity className="ml-[27] w-[30px] h-[30px] bg-[#5A4DF3] rounded-full items-center justify-center">
                 <AntDesign name="arrowleft" size={15} color="white"/>
             </TouchableOpacity>    
         </View>
 
+        {/* Card */}
         <View className="mx-[27] mt-[20] bg-white rounded-xl shadow">
+            {/* ID Produk & Status */}
             <View className="border-b border-gray-200 flex-row justify-between items-center p-[15]">
                 <View>
                     <Text className="text-xl font-bold">#0376</Text>
