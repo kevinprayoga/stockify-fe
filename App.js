@@ -23,7 +23,7 @@ export default function App() {
         headerMode="float"
         animation="fade"
       >
-        {/* <Stack.Screen
+        <Stack.Screen
           name="Landing1"
           component={Landing1} 
           options={{
@@ -33,13 +33,6 @@ export default function App() {
         <Stack.Screen
           name="Landing2"
           component={Landing2} 
-          options={{
-            headerShown: false,
-          }}
-        /> */}
-        <Stack.Screen
-          name="Cart"
-          component={Cart} 
           options={{
             headerShown: false,
           }}
