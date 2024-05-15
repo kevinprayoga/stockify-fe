@@ -17,7 +17,7 @@ export default function HistoryDetail() {
             </TouchableOpacity>    
         </View>
 
-        <View className="mx-[27] mt-[20] bg-white rounded-xl">
+        <View className="mx-[27] mt-[20] bg-white rounded-xl shadow">
             <View className="border-b border-gray-200 flex-row justify-between items-center p-[15]">
                 <View>
                     <Text className="text-xl font-bold">#0376</Text>
