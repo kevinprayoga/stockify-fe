@@ -1,5 +1,7 @@
 import Landing1 from "./src/LandingPage/Landing1";
 import Landing2 from "./src/LandingPage/Landing2";
+import Order from "./src/Tab/Order";
+import OrderCompleted from "./src/Tab/OrderCompleted";
 import Cart from "./src/Tab/Cart";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -26,8 +28,8 @@ export default function App() {
         animation="fade"
       >
         <Stack.Screen
-          name="HelpSupport"
-          component={HelpSupport} 
+          name="Landing1"
+          component={Landing1} 
           options={{
             headerShown: false,
           }}
