@@ -8,6 +8,7 @@ import profpic from '../assets/images/profpic.png';
 import stocklogo from '../assets/images/stocklogo.png';
 import aboutappillustration from '../assets/images/aboutappillustration.png';
 import splash from '../assets/images/splash.png';
+import faq from '../assets/images/faq.png';
 
 
 export default {
@@ -20,5 +21,6 @@ export default {
   profpic,
   stocklogo,
   aboutappillustration,
-  splash
+  splash,
+  faq
 }
