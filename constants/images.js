@@ -6,6 +6,8 @@ import helpsupport from '../assets/images/helpsupport.png';
 import aboutapp from '../assets/images/aboutapp.png';
 import profpic from '../assets/images/profpic.png';
 import stocklogo from '../assets/images/stocklogo.png';
+import aboutappillustration from '../assets/images/aboutappillustration.png';
+import splash from '../assets/images/splash.png';
 
 
 export default {
@@ -16,5 +18,7 @@ export default {
   helpsupport,
   aboutapp,
   profpic,
-  stocklogo
+  stocklogo,
+  aboutappillustration,
+  splash
 }
