@@ -1,6 +1,6 @@
 import Landing1 from "./src/LandingPage/Landing1";
 import Landing2 from "./src/LandingPage/Landing2";
-
+import Cart from "./src/Tab/Cart";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
