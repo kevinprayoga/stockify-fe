@@ -5,9 +5,11 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { config, closeConfig } from "./hooks/animation";
+import Stock from "./src/Tab/Stock";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
+
 
   return (
     <NavigationContainer>
@@ -24,8 +26,8 @@ export default function App() {
         animation="fade"
       >
         <Stack.Screen
-          name="Landing1"
-          component={Landing1} 
+          name="Stock"
+          component={Stock} 
           options={{
             headerShown: false,
           }}
