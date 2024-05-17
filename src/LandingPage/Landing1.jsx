@@ -18,8 +18,8 @@ export default function Landing1() {
         source={images.landing}
         className='mt-96'
       />
-      <TouchableOpacity onPress={signHandler} className='bg-primary mt-7 px-10 py-3 rounded-lg shadow-[#3A8DEC]'>
-        <Text className='font-p text-lg text-white font-semibold'>Get Started</Text>
+      <TouchableOpacity onPress={signHandler} className='bg-primary mt-7 px-10 py-3 rounded-lg shadow shadow-[#3A8DEC]'>
+        <Text className='font-p text-xl text-white font-semibold'>Ayo Mulai</Text>
       </TouchableOpacity>
     </View>
   );

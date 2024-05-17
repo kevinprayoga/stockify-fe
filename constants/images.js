@@ -10,6 +10,7 @@ import stocklogo from '../assets/images/stocklogo.png';
 import aboutappillustration from '../assets/images/aboutappillustration.png';
 import splash from '../assets/images/splash.png';
 import faq from '../assets/images/faq.png';
+import google from '../assets/images/google.png';
 
 export default {
   landing,
@@ -23,5 +24,6 @@ export default {
   stocklogo,
   aboutappillustration,
   splash,
-  faq
+  faq,
+  google
 }
