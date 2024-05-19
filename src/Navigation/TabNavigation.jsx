@@ -10,7 +10,7 @@ import History from "../Tab/History";
 import Profile from "../Tab/Profile";
 
 import { View, Text } from 'react-native';
-import { Entypo, MaterialIcons } from '@expo/vector-icons';
+import { Entypo, Feather, MaterialCommunityIcons, FontAwesome5, Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 
@@ -47,7 +47,7 @@ export default function TabNavigation() {
         options={{
           tabBarIcon: ({ focused, size }) => (
             <View style={focused ? styles.focusedTab : styles.defaultTab}>
-              <Entypo name="home" size={size} color={focused ? "#5A4DF3" : "#FFFFFF"} />
+              <MaterialCommunityIcons name="home-analytics" size={size} color={focused ? "#5A4DF3" : "#FFFFFF"} />
               {focused && <Text style={styles.focusedText}>Home</Text>}
             </View>
           ),
@@ -59,7 +59,7 @@ export default function TabNavigation() {
         options={{
           tabBarIcon: ({ focused, size }) => (
             <View style={focused ? styles.focusedTab : styles.defaultTab}>
-              <MaterialIcons name="inventory" size={size} color={focused ? "#5A4DF3" : "#FFFFFF"} />
+              <Feather name="box" size={size} color={focused ? "#5A4DF3" : "#FFFFFF"} />
               {focused && <Text style={styles.focusedText}>Stock</Text>}
             </View>
           ),
@@ -71,7 +71,7 @@ export default function TabNavigation() {
         options={{
           tabBarIcon: ({ focused, size }) => (
             <View style={focused ? styles.focusedTab : styles.defaultTab}>
-              <MaterialIcons name="shopping-cart" size={size} color={focused ? "#5A4DF3" : "#FFFFFF"} />
+              <Entypo name="shopping-bag" size={size} color={focused ? "#5A4DF3" : "#FFFFFF"} />
               {focused && <Text style={styles.focusedText}>Cart</Text>}
             </View>
           ),
@@ -83,7 +83,7 @@ export default function TabNavigation() {
         options={{
           tabBarIcon: ({ focused, size }) => (
             <View style={focused ? styles.focusedTab : styles.defaultTab}>
-              <MaterialIcons name="history" size={size} color={focused ? "#5A4DF3" : "#FFFFFF"} />
+              <FontAwesome5 name="clipboard-list" size={size} color={focused ? "#5A4DF3" : "#FFFFFF"} />
               {focused && <Text style={styles.focusedText}>History</Text>}
             </View>
           ),
@@ -95,7 +95,7 @@ export default function TabNavigation() {
         options={{
           tabBarIcon: ({ focused, size }) => (
             <View style={focused ? styles.focusedTab : styles.defaultTab}>
-              <MaterialIcons name="person" size={size} color={focused ? "#5A4DF3" : "#FFFFFF"} />
+              <Ionicons name="person-circle-outline" size={size} color={focused ? "#5A4DF3" : "#FFFFFF"} />
               {focused && <Text style={styles.focusedText}>Profile</Text>}
             </View>
           ),
@@ -125,7 +125,7 @@ const styles = {
   },
   focusedText: {
     color: '#5A4DF3',
-    fontSize: 12,
+    fontSize: 13,
     marginLeft: 5,
     fontFamily: 'Poppins',
     fontWeight: 'bold',
