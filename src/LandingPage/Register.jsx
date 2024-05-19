@@ -90,10 +90,10 @@ export default function Register() {
           <TouchableOpacity title="Back" onPress={backHandler} className="rounded-full mr-80 p-1.5 bg-primary">
             <Ionicons name="arrow-back" size={32} color="white" />
           </TouchableOpacity>
-          <Text className="font-h text-black text-2xl font-medium mt-10">Pendaftaran Akun</Text>
-          <Text className="font-p text-vSmallFont text-base mt-0.5">Lengkapi informasi profile Anda!</Text>
+          <Text className="font-m text-black text-2xl font-medium mt-10">Pendaftaran Akun</Text>
+          <Text className="font-r text-vSmallFont text-base mt-0.5">Lengkapi informasi profile Anda!</Text>
           <View className="flex mt-10">
-            <Text className="font-p text-mediumFont font-medium text-lg">Detail Akun</Text>
+            <Text className="font-m text-mediumFont font-medium text-lg">Detail Akun</Text>
             <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
               <TextInput 
                 placeholder="Nama Pertama" 
@@ -140,9 +140,9 @@ export default function Register() {
             </View>
           </View>
           <TouchableOpacity onPress={onSignUpPress} className="bg-primary mx-4 mt-8 py-4 rounded-lg shadow shadow-[#3A8DEC]">
-            <Text className="font-p text-xl text-white font-semibold text-center">Daftar</Text>
+            <Text className="font-s text-xl text-white font-semibold text-center">Daftar</Text>
           </TouchableOpacity>
-          <Text className="font-p text-mediumFont font-medium text-base text-center mt-5">ATAU</Text>
+          <Text className="font-m text-mediumFont font-medium text-base text-center mt-5">ATAU</Text>
           <TouchableOpacity onPress={onPressGoogle} className="shadow mt-5">
             <Image 
               source={images.google}
@@ -153,8 +153,8 @@ export default function Register() {
       )}
       {pendingVerification && (
       <View className="flex mx-8 mt-20">
-        <Text className="font-h text-black text-2xl font-medium mt-10">Kode Verifikasi</Text>
-        <Text className="font-p text-vSmallFont text-base mt-0.5">Masukkan kode verifikasi Anda!</Text>
+        <Text className="font-m text-black text-2xl font-medium mt-10">Kode Verifikasi</Text>
+        <Text className="font-r text-vSmallFont text-base mt-0.5">Masukkan kode verifikasi Anda!</Text>
         <View className="flex mt-5">
           <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
             <TextInput 
@@ -168,7 +168,7 @@ export default function Register() {
             />
           </View>
           <TouchableOpacity onPress={onPressVerify} className="bg-primary mx-4 mt-8 py-4 rounded-lg shadow shadow-[#3A8DEC]">
-            <Text className="font-p text-xl text-white font-semibold text-center">Verifikasi Email</Text>
+            <Text className="font-s text-xl text-white font-semibold text-center">Verifikasi Email</Text>
           </TouchableOpacity>
         </View>
       </View>

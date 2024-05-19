@@ -19,8 +19,8 @@ export default function BusinessInfo() {
   return (
     <View className="bg-bg h-screen">
       <View className="flex mx-8 mt-20">
-        <Text className="font-h text-black text-2xl font-medium mt-10">Informasi Bisnis</Text>
-        <Text className="font-p text-vSmallFont text-base mt-0.5">Masukkan informasi bisnis Anda!</Text>
+        <Text className="font-m text-black text-2xl font-medium mt-10">Informasi Bisnis</Text>
+        <Text className="font-r text-vSmallFont text-base mt-0.5">Masukkan informasi bisnis Anda!</Text>
         <View className="flex mt-5">
           <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
             <TextInput 
@@ -77,7 +77,7 @@ export default function BusinessInfo() {
             />
           </View>
           <TouchableOpacity onPress={handleSubmit} className="bg-primary mx-4 mt-8 py-4 rounded-lg shadow shadow-[#3A8DEC]">
-            <Text className="font-p text-xl text-white font-semibold text-center">Simpan</Text>
+            <Text className="font-s text-xl text-white font-semibold text-center">Simpan</Text>
           </TouchableOpacity>
         </View>
       </View>

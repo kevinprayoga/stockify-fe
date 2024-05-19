@@ -46,8 +46,8 @@ export default function Login() {
         <TouchableOpacity title="Back" onPress={backHandler} className="rounded-full mr-80 p-1.5 bg-primary">
           <Ionicons name="arrow-back" size={32} color="white" />
         </TouchableOpacity>
-        <Text className="font-h text-black text-2xl font-medium mt-10">Masuk Akun</Text>
-        <Text className="font-p text-vSmallFont text-base mt-0.5">Masuk sesuai akun Anda!</Text>
+        <Text className="font-m text-black text-2xl font-medium mt-10">Masuk Akun</Text>
+        <Text className="font-r text-vSmallFont text-base mt-0.5">Masuk sesuai akun Anda!</Text>
         <View className="flex mt-5">
           <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
             <TextInput 
@@ -76,10 +76,10 @@ export default function Login() {
             </TouchableOpacity>
           </View>
           <TouchableOpacity onPress={onSignInPress} className="bg-primary mx-4 mt-8 py-4 rounded-lg shadow shadow-[#3A8DEC]">
-            <Text className="font-p text-xl text-white font-semibold text-center">Masuk</Text>
+            <Text className="font-s text-xl text-white font-semibold text-center">Masuk</Text>
           </TouchableOpacity>
         </View>
-        <Text className="font-p text-vSmallFont text-small mt-3 text-center font-semibold">Belum punya akun?
+        <Text className="font-s text-vSmallFont text-small mt-3 text-center font-semibold">Belum punya akun?
           <Text onPress={() => (nav.navigate("Register"))} className="text-primary font-semibold"> Daftar akun</Text>
         </Text>
       </View>
