@@ -1,19 +1,43 @@
-import React from "react";
-import { Text, View, TextInput, TouchableOpacity, Image } from "react-native";
+import React, { useState } from "react";
+import { Text, View, TextInput, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
-import { Ionicons } from '@expo/vector-icons';
-import { images } from "../../constants";
+import { Ionicons, Feather } from '@expo/vector-icons';
+import { useSignIn, useSession } from "@clerk/clerk-expo";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
+  const { signIn, setActive, isLoaded } = useSignIn();
+  const { session } = useSession();
+  const [emailAddress, setEmailAddress] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordVisible, setPasswordVisible] = useState(false); // State untuk visibilitas password
+
+  const { setOrigin } = useAuth();
   const nav = useNavigation();
 
   const backHandler = () => {
     nav.navigate("Landing2");
   };
 
-  const loginHandler = () => {
+  const onSignInPress = async () => {
+    if (!isLoaded) {
+      return null;
+    }
+    console.log('test');
 
+    try {
+      if (!session) {
+        const completeSignIn = await signIn.create({
+          identifier: emailAddress,
+          password,
+        });
+        await setActive({ session: completeSignIn.createdSessionId });
+        console.log("User is signed in");
+        setOrigin('login');
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -29,36 +53,36 @@ export default function Login() {
             <TextInput 
               placeholder="Email"
               placeholderTextColor="#9CA3AF" 
+              value={emailAddress}
+              onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
               className="mx-3 font-p text-base text-smallFont rounded-lg h-14" 
               inputMode="email" 
               autoCapitalize="none"
               autoFocus
             />
           </View>
-          <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
+          <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6 flex-row items-center">
             <TextInput 
               placeholder="Password" 
-              placeholderTextColor="#9CA3AF" 
-              className="mx-3 font-p text-base text-smallFont rounded-lg h-14" 
+              placeholderTextColor="#9CA3AF"
+              value={password}
+              onChangeText={(password) => setPassword(password)}
+              className="mx-3 font-p text-base text-smallFont rounded-lg h-14 flex-1" 
               autoCapitalize="none" 
-              secureTextEntry
+              secureTextEntry={!passwordVisible} // Control visibilitas password
             />
+            <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)} className="mr-1">
+              <Feather name={passwordVisible ? "eye-off" : "eye"} size={24} color="gray" />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity className="bg-primary mx-4 mt-8 py-4 rounded-lg shadow shadow-[#3A8DEC]">
+          <TouchableOpacity onPress={onSignInPress} className="bg-primary mx-4 mt-8 py-4 rounded-lg shadow shadow-[#3A8DEC]">
             <Text className="font-p text-xl text-white font-semibold text-center">Masuk</Text>
           </TouchableOpacity>
         </View>
-        <Text className="font-p text-mediumFont font-medium text-base text-center mt-5">ATAU</Text>
-        <TouchableOpacity className="shadow">
-          <Image 
-            source={images.google}
-            className='mt-5 mx-auto'
-          />
-        </TouchableOpacity>
         <Text className="font-p text-vSmallFont text-small mt-3 text-center font-semibold">Belum punya akun?
           <Text onPress={() => (nav.navigate("Register"))} className="text-primary font-semibold"> Daftar akun</Text>
         </Text>
       </View>
     </View>
   );
-}
+};
