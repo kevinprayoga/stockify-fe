@@ -11,8 +11,11 @@ module.exports = {
         mediumFont: '#292A2E'
       },
       fontFamily: {
-        h: ['Poppins-Bold', 'sans-serif'],
-        p: ['Poppins-Regular', 'sans-serif'],
+        bold: ['Poppins-Bold', 'sans-serif'],
+        semiBold: ['Poppins-SemiBold', 'sans-serif'],
+        medium: ['Poppins-Medium', 'sans-serif'],
+        regular: ['Poppins-Regular', 'sans-serif'],
+        light: ['Poppins-Light', 'sans-serif'],
       }
     },
   },
