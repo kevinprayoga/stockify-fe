@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, TextInput, TouchableOpacity, View, Image } from "react-native";
+import { Text, TextInput, TouchableOpacity, View, Image, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { useSignUp } from "@clerk/clerk-expo";
@@ -86,73 +86,75 @@ export default function Register() {
   return (
     <View className="bg-bg h-screen">
       {!pendingVerification && (
-        <View className="flex mx-8 mt-20">
-          <TouchableOpacity title="Back" onPress={backHandler} className="rounded-full mr-80 p-1.5 bg-primary">
-            <Ionicons name="arrow-back" size={32} color="white" />
-          </TouchableOpacity>
-          <Text className="font-m text-black text-2xl font-medium mt-10">Pendaftaran Akun</Text>
-          <Text className="font-r text-vSmallFont text-base mt-0.5">Lengkapi informasi profile Anda!</Text>
-          <View className="flex mt-10">
-            <Text className="font-m text-mediumFont font-medium text-lg">Detail Akun</Text>
-            <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
-              <TextInput 
-                placeholder="Nama Pertama" 
-                placeholderTextColor="#9CA3AF"
-                value={firstName}
-                onChangeText={(firstName) => setFirstName(firstName)}
-                className="mx-3 font-p text-base text-smallFont rounded-lg h-14" 
-                autoFocus
-              />
+        <View className="flex items-center justify-center h-screen">
+          <ScrollView className="flex mx-8 mt-20">
+            <TouchableOpacity title="Back" onPress={backHandler} className="rounded-full mr-72 p-1.5 bg-primary">
+              <Ionicons name="arrow-back" size={32} color="white" />
+            </TouchableOpacity>
+            <Text className="font-m text-black text-2xl font-medium mt-10">Pendaftaran Akun</Text>
+            <Text className="font-r text-vSmallFont text-base mt-0.5">Lengkapi informasi profile Anda!</Text>
+            <View className="flex mt-10">
+              <Text className="font-m text-mediumFont font-medium text-lg">Detail Akun</Text>
+              <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
+                <TextInput 
+                  placeholder="Nama Pertama" 
+                  placeholderTextColor="#9CA3AF"
+                  value={firstName}
+                  onChangeText={(firstName) => setFirstName(firstName)}
+                  className="mx-3 font-p text-base text-smallFont rounded-lg h-14" 
+                  autoFocus
+                />
+              </View>
+              <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
+                <TextInput 
+                  placeholder="Nama Terakhir" 
+                  placeholderTextColor="#9CA3AF"
+                  value={lastName}
+                  onChangeText={(lastName) => setLastName(lastName)}
+                  className="mx-3 font-p text-base text-smallFont rounded-lg h-14" 
+                />
+              </View>
+              <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
+                <TextInput 
+                  placeholder="Email"
+                  placeholderTextColor="#9CA3AF" 
+                  value={emailAddress}
+                  onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
+                  className="mx-3 font-p text-base text-smallFont rounded-lg h-14" 
+                  inputMode="email" 
+                  autoCapitalize="none"
+                />
+              </View>
+              <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6 flex-row items-center">
+                <TextInput 
+                  placeholder="Password" 
+                  placeholderTextColor="#9CA3AF"
+                  value={password}
+                  onChangeText={(password) => setPassword(password)}
+                  className="mx-3 font-p text-base text-smallFont rounded-lg h-14 flex-1" 
+                  autoCapitalize="none" 
+                  secureTextEntry={!passwordVisible} // Control visibilitas password
+                />
+                <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)} className="mr-1">
+                  <Feather name={passwordVisible ? "eye-off" : "eye"} size={24} color="gray" />
+                </TouchableOpacity>
+              </View>
             </View>
-            <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
-              <TextInput 
-                placeholder="Nama Terakhir" 
-                placeholderTextColor="#9CA3AF"
-                value={lastName}
-                onChangeText={(lastName) => setLastName(lastName)}
-                className="mx-3 font-p text-base text-smallFont rounded-lg h-14" 
+            <TouchableOpacity onPress={onSignUpPress} className="bg-primary mx-4 mt-8 py-4 rounded-lg shadow shadow-[#3A8DEC]">
+              <Text className="font-s text-xl text-white font-semibold text-center">Daftar</Text>
+            </TouchableOpacity>
+            <Text className="font-m text-mediumFont font-medium text-base text-center mt-5">ATAU</Text>
+            <TouchableOpacity onPress={onPressGoogle} className="shadow mt-5">
+              <Image 
+                source={images.google}
+                className='mx-auto'
               />
-            </View>
-            <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
-              <TextInput 
-                placeholder="Email"
-                placeholderTextColor="#9CA3AF" 
-                value={emailAddress}
-                onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
-                className="mx-3 font-p text-base text-smallFont rounded-lg h-14" 
-                inputMode="email" 
-                autoCapitalize="none"
-              />
-            </View>
-            <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6 flex-row items-center">
-              <TextInput 
-                placeholder="Password" 
-                placeholderTextColor="#9CA3AF"
-                value={password}
-                onChangeText={(password) => setPassword(password)}
-                className="mx-3 font-p text-base text-smallFont rounded-lg h-14 flex-1" 
-                autoCapitalize="none" 
-                secureTextEntry={!passwordVisible} // Control visibilitas password
-              />
-              <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)} className="mr-1">
-                <Feather name={passwordVisible ? "eye-off" : "eye"} size={24} color="gray" />
-              </TouchableOpacity>
-            </View>
-          </View>
-          <TouchableOpacity onPress={onSignUpPress} className="bg-primary mx-4 mt-8 py-4 rounded-lg shadow shadow-[#3A8DEC]">
-            <Text className="font-s text-xl text-white font-semibold text-center">Daftar</Text>
-          </TouchableOpacity>
-          <Text className="font-m text-mediumFont font-medium text-base text-center mt-5">ATAU</Text>
-          <TouchableOpacity onPress={onPressGoogle} className="shadow mt-5">
-            <Image 
-              source={images.google}
-              className='mx-auto'
-            />
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </ScrollView>
         </View>
       )}
       {pendingVerification && (
-      <View className="flex mx-8 mt-20">
+      <ScrollView className="flex mx-8 mt-20">
         <Text className="font-m text-black text-2xl font-medium mt-10">Kode Verifikasi</Text>
         <Text className="font-r text-vSmallFont text-base mt-0.5">Masukkan kode verifikasi Anda!</Text>
         <View className="flex mt-5">
@@ -171,7 +173,7 @@ export default function Register() {
             <Text className="font-s text-xl text-white font-semibold text-center">Verifikasi Email</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
       )}
     </View>
   );
