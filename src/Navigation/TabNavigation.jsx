@@ -112,7 +112,7 @@ const styles = {
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
     paddingVertical: 10,
     marginTop: 20,
     height: 44,
