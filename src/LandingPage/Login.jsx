@@ -72,7 +72,7 @@ export default function Login() {
                 secureTextEntry={!passwordVisible} // Control visibilitas password
               />
               <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)} className="mr-1">
-                <Feather name={passwordVisible ? "eye-off" : "eye"} size={24} color="gray" />
+                <Feather name={passwordVisible ? "eye" : "eye-off"} size={24} color="gray" />
               </TouchableOpacity>
             </View>
             <TouchableOpacity onPress={onSignInPress} className="bg-primary mx-4 mt-8 py-4 rounded-lg shadow shadow-[#3A8DEC]">

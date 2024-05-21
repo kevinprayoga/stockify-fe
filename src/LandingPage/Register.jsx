@@ -136,7 +136,7 @@ export default function Register() {
                   secureTextEntry={!passwordVisible} // Control visibilitas password
                 />
                 <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)} className="mr-1">
-                  <Feather name={passwordVisible ? "eye-off" : "eye"} size={24} color="gray" />
+                  <Feather name={passwordVisible ? "eye" : "eye-off"} size={24} color="gray" />
                 </TouchableOpacity>
               </View>
             </View>
