@@ -20,9 +20,9 @@ export default function BusinessInfo() {
     <View className="bg-bg h-screen">
       <View className="flex items-center justify-center h-screen"></View>
         <ScrollView className="flex mx-8 mt-20">
-          <Text className="font-m text-black text-2xl font-medium mt-10">Informasi Bisnis</Text>
+          <Text className="font-m text-black text-2xl font-medium mt-7">Informasi Bisnis</Text>
           <Text className="font-r text-vSmallFont text-base mt-0.5">Masukkan informasi bisnis Anda!</Text>
-          <View className="flex mt-5">
+          <View className="flex mt-7">
             <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
               <TextInput 
                 placeholder="Nama Bisnis" 

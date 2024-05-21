@@ -36,7 +36,8 @@ export default function TabNavigation() {
           height: 70, 
           borderTopLeftRadius: 20, 
           borderTopRightRadius: 20,
-          paddingHorizontal: 10, 
+          paddingHorizontal: 10,
+          height: 80,
         },
         tabBarShowLabel: false,
       }}

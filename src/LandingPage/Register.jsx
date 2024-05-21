@@ -91,9 +91,9 @@ export default function Register() {
             <TouchableOpacity title="Back" onPress={backHandler} className="rounded-full mr-72 p-1.5 bg-primary">
               <Ionicons name="arrow-back" size={25} color="white" />
             </TouchableOpacity>
-            <Text className="font-m text-black text-2xl font-medium mt-10">Pendaftaran Akun</Text>
+            <Text className="font-m text-black text-2xl font-medium mt-7">Pendaftaran Akun</Text>
             <Text className="font-r text-vSmallFont text-base mt-0.5">Lengkapi informasi profile Anda!</Text>
-            <View className="flex mt-10">
+            <View className="flex mt-7">
               <Text className="font-m text-mediumFont font-medium text-lg">Detail Akun</Text>
               <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
                 <TextInput 
@@ -154,26 +154,28 @@ export default function Register() {
         </View>
       )}
       {pendingVerification && (
-      <ScrollView className="flex mx-8 mt-20">
-        <Text className="font-m text-black text-2xl font-medium mt-10">Kode Verifikasi</Text>
-        <Text className="font-r text-vSmallFont text-base mt-0.5">Masukkan kode verifikasi Anda!</Text>
-        <View className="flex mt-5">
-          <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
-            <TextInput 
-              placeholder="Kode Verifikasi"
-              placeholderTextColor="#9CA3AF"
-              value={code}
-              onChangeText={(code) => setCode(code)}
-              className="mx-3 font-p text-base text-smallFont rounded-lg h-14" 
-              autoCapitalize="none"
-              autoFocus
-            />
+      <View className="flex items-center justify-center h-screen">
+        <ScrollView className="flex mx-8 mt-20">
+          <Text className="font-m text-black text-2xl font-medium mt-10">Kode Verifikasi</Text>
+          <Text className="font-r text-vSmallFont text-base mt-0.5">Masukkan kode verifikasi Anda!</Text>
+          <View className="flex mt-5">
+            <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
+              <TextInput 
+                placeholder="Kode Verifikasi"
+                placeholderTextColor="#9CA3AF"
+                value={code}
+                onChangeText={(code) => setCode(code)}
+                className="mx-3 font-p text-base text-smallFont rounded-lg h-14" 
+                autoCapitalize="none"
+                autoFocus
+              />
+            </View>
+            <TouchableOpacity onPress={onPressVerify} className="bg-primary mx-4 mt-8 py-4 rounded-lg shadow shadow-[#3A8DEC]">
+              <Text className="font-s text-xl text-white font-semibold text-center">Verifikasi Email</Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={onPressVerify} className="bg-primary mx-4 mt-8 py-4 rounded-lg shadow shadow-[#3A8DEC]">
-            <Text className="font-s text-xl text-white font-semibold text-center">Verifikasi Email</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
       )}
     </View>
   );

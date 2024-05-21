@@ -46,9 +46,9 @@ export default function Login() {
           <TouchableOpacity title="Back" onPress={backHandler} className="rounded-full mr-72 p-1.5 bg-primary">
             <Ionicons name="arrow-back" size={25} color="white" />
           </TouchableOpacity>
-          <Text className="font-m text-black text-2xl font-medium mt-10">Masuk Akun</Text>
+          <Text className="font-m text-black text-2xl font-medium mt-7">Masuk Akun</Text>
           <Text className="font-r text-vSmallFont text-base mt-0.5">Masuk sesuai akun Anda!</Text>
-          <View className="flex mt-5">
+          <View className="flex mt-7">
             <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
               <TextInput 
                 placeholder="Email"
