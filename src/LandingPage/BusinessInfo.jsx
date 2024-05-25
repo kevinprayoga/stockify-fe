@@ -4,6 +4,8 @@ import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
 import { useSession } from "@clerk/clerk-react";
 
+import { API_URL, PORT } from '@env';
+
 export default function BusinessInfo() {
   const [nameBisnis, setNameBisnis] = useState('');
   const [alamat, setAlamat] = useState('');
@@ -41,7 +43,7 @@ export default function BusinessInfo() {
       const token = await session.getToken();
       console.log('Token:', token);
       /** Ganti Ip sesuai ip address network kalian di laptop masing2 */
-      const response = await fetch('http://172.24.200.127:8080/business', {
+      const response = await fetch(`${API_URL}:${PORT}/business`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
