@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Text, TextInput, TouchableOpacity, View, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "../context/AuthContext";
+import { useSession } from "@clerk/clerk-react";
 
 export default function BusinessInfo() {
   const [nameBisnis, setNameBisnis] = useState('');
@@ -10,71 +12,129 @@ export default function BusinessInfo() {
   const [kecamatan, setKecamatan] = useState('');
   const [pos, setPos] = useState('');
 
+  const [submitPressed, setSubmitPressed] = useState(false);
+  const { setOrigin } = useAuth();
+  const [errorMessage, setErrorMessage] = useState('');
+  const { session } = useSession();
+
   const nav = useNavigation();
 
-  const handleSubmit = async() => {
-    nav.push("TabHome");
+  const handleSubmit = async () => {
+    setSubmitPressed(true);
+    setErrorMessage('');
+
+    if (!nameBisnis || !alamat || !provinsi || !kota || !kecamatan || !pos) {
+      setErrorMessage('Semua field harus diisi');
+      return;
+    }
+
+    const payload = {
+      businessName: nameBisnis,
+      businessAddress: alamat,
+      province: provinsi,
+      city: kota,
+      kecamatan: kecamatan,
+      posCode: pos
+    };
+
+    try {
+      const token = await session.getToken();
+      console.log('Token:', token);
+      /** Ganti Ip sesuai ip address network kalian di laptop masing2 */
+      const response = await fetch('http://172.24.200.127:8080/business', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+      console.log('testing');
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log('Response data:', responseData);
+        nav.push("TabHome");
+        setSubmitPressed(false);
+        setOrigin(null);
+      } else {
+        const errorData = await response.json();
+        console.log('Error data:', errorData);
+        setErrorMessage('Gagal menyimpan data bisnis');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setErrorMessage('Gagal menyimpan data bisnis');
+    }
+  };
+
+  const getInputStyle = (inputValue) => {
+    return inputValue || !submitPressed 
+      ? "bg-white rounded-lg px-2 h-14 mx-4 mt-6"
+      : "bg-white rounded-lg px-2 h-14 mx-4 mt-6 border-2 border-red-500";
   };
 
   return (
     <View className="bg-bg h-screen">
-      <View className="flex items-center justify-center h-screen"></View>
+      <View className="flex h-screen">
         <ScrollView className="flex mx-8 mt-20">
           <Text className="font-m text-black text-2xl font-medium mt-7">Informasi Bisnis</Text>
           <Text className="font-r text-vSmallFont text-base mt-0.5">Masukkan informasi bisnis Anda!</Text>
+          {errorMessage ? (
+                <Text className="font-r text-red-500 mt-2">{errorMessage}</Text>
+          ) : null}
           <View className="flex mt-7">
-            <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
-              <TextInput 
-                placeholder="Nama Bisnis" 
+            <View className={getInputStyle(nameBisnis)}>
+              <TextInput
+                placeholder="Nama Bisnis"
                 placeholderTextColor="#9CA3AF"
                 value={nameBisnis}
                 onChangeText={(nameBisnis) => setNameBisnis(nameBisnis)}
-                className="mx-3 font-p text-base text-smallFont rounded-lg h-14" 
+                className="mx-3 font-p text-base text-smallFont rounded-lg h-14"
               />
             </View>
-            <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
-              <TextInput 
-                placeholder="Alamat Bisnis" 
+            <View className={getInputStyle(alamat)}>
+              <TextInput
+                placeholder="Alamat Bisnis"
                 placeholderTextColor="#9CA3AF"
                 value={alamat}
                 onChangeText={(alamat) => setAlamat(alamat)}
                 className="mx-3 font-p text-base text-smallFont rounded-lg h-14"
               />
             </View>
-            <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
-              <TextInput 
+            <View className={getInputStyle(provinsi)}>
+              <TextInput
                 placeholder="Provinsi"
-                placeholderTextColor="#9CA3AF" 
+                placeholderTextColor="#9CA3AF"
                 value={provinsi}
                 onChangeText={(provinsi) => setProvinsi(provinsi)}
-                className="mx-3 font-p text-base text-smallFont rounded-lg h-14" 
+                className="mx-3 font-p text-base text-smallFont rounded-lg h-14"
               />
             </View>
-            <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
-              <TextInput 
-                placeholder="Kota/Kabupaten" 
-                placeholderTextColor="#9CA3AF" 
+            <View className={getInputStyle(kota)}>
+              <TextInput
+                placeholder="Kota/Kabupaten"
+                placeholderTextColor="#9CA3AF"
                 value={kota}
                 onChangeText={(kota) => setKota(kota)}
-                className="mx-3 font-p text-base text-smallFont rounded-lg h-14" 
+                className="mx-3 font-p text-base text-smallFont rounded-lg h-14"
               />
             </View>
-            <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
-              <TextInput 
-                placeholder="Kecamatan" 
+            <View className={getInputStyle(kecamatan)}>
+              <TextInput
+                placeholder="Kecamatan"
                 placeholderTextColor="#9CA3AF"
                 value={kecamatan}
                 onChangeText={(kecamatan) => setKecamatan(kecamatan)}
-                className="mx-3 font-p text-base text-smallFont rounded-lg h-14" 
+                className="mx-3 font-p text-base text-smallFont rounded-lg h-14"
               />
             </View>
-            <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
-              <TextInput 
-                placeholder="Kode Pos" 
+            <View className={getInputStyle(pos)}>
+              <TextInput
+                placeholder="Kode Pos"
                 placeholderTextColor="#9CA3AF"
                 value={pos}
                 onChangeText={(pos) => setPos(pos)}
-                className="mx-3 font-p text-base text-smallFont rounded-lg h-14" 
+                className="mx-3 font-p text-base text-smallFont rounded-lg h-14"
               />
             </View>
             <TouchableOpacity onPress={handleSubmit} className="bg-primary mx-4 mt-8 py-4 rounded-lg shadow shadow-[#3A8DEC]">
@@ -82,7 +142,7 @@ export default function BusinessInfo() {
             </TouchableOpacity>
           </View>
         </ScrollView>
-      <View className="flex items-center justify-center h-screen"></View>
+      </View>
     </View>
   );
-};
+}

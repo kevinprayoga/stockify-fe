@@ -11,18 +11,24 @@ export default function Login() {
   const [emailAddress, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false); // State untuk visibilitas password
+  const [submitPressed, setSubmitPressed] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const { setOrigin } = useAuth();
   const nav = useNavigation();
 
   const backHandler = () => {
     nav.navigate("Landing2");
+    setSubmitPressed(false);
   };
 
   const onSignInPress = async () => {
     if (!isLoaded) {
       return null;
     }
+
+    setSubmitPressed(true);
+    setErrorMessage('');
 
     try {
       if (!session) {
@@ -33,10 +39,24 @@ export default function Login() {
         await setActive({ session: completeSignIn.createdSessionId });
         console.log("User is signed in");
         setOrigin('login');
+        setSubmitPressed(false);
       }
     } catch (err) {
       console.log(err);
+      setErrorMessage('Email atau password salah');
     }
+  };
+
+  const getInputStyle = (inputValue) => {
+    return inputValue || !submitPressed
+      ? "bg-white rounded-lg px-2 h-14 mx-4 mt-6"
+      : "bg-white rounded-lg px-2 h-14 mx-4 mt-6 border-2 border-red-500";
+  };
+
+  const getInputPWStyle = (inputValue) => {
+    return inputValue || !submitPressed
+      ? "bg-white rounded-lg px-2 h-14 mx-4 mt-6 flex-row items-center"
+      : "bg-white rounded-lg px-2 h-14 mx-4 mt-6 flex-row items-center border-2 border-red-500";
   };
 
   return (
@@ -48,8 +68,11 @@ export default function Login() {
           </TouchableOpacity>
           <Text className="font-m text-black text-2xl font-medium mt-7">Masuk Akun</Text>
           <Text className="font-r text-vSmallFont text-base mt-0.5">Masuk sesuai akun Anda!</Text>
+          {errorMessage ? (
+              <Text className="font-r text-red-500 mt-2">{errorMessage}</Text>
+          ) : null}
           <View className="flex mt-7">
-            <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6">
+            <View className={getInputStyle(emailAddress)}>
               <TextInput 
                 placeholder="Email"
                 placeholderTextColor="#9CA3AF" 
@@ -61,7 +84,7 @@ export default function Login() {
                 autoFocus
               />
             </View>
-            <View className="bg-white rounded-lg px-2 h-14 mx-4 mt-6 flex-row items-center">
+            <View className={getInputPWStyle(password)}>
               <TextInput 
                 placeholder="Password" 
                 placeholderTextColor="#9CA3AF"

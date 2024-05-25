@@ -1,7 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useNavigation } from '@react-navigation/native';
-import { useAuth } from "../context/AuthContext";
 
 import Home from "../Tab/Home";
 import Stock from "../Tab/Stock";
@@ -15,16 +13,6 @@ import { Entypo, Feather, MaterialCommunityIcons, FontAwesome5, Ionicons } from 
 const Tab = createBottomTabNavigator();
 
 export default function TabNavigation() {
-  const { origin, setOrigin } = useAuth();
-  const nav = useNavigation();
-
-  useEffect(() => {
-    if (origin === 'register') {
-      nav.navigate('BusinessInfo');
-      setOrigin(null); 
-    }
-  }, [origin]);
-
   return (
     <Tab.Navigator
       screenOptions={{

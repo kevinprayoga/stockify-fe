@@ -1,5 +1,5 @@
-import React from 'react';
-import { ClerkProvider, SignedIn, SignedOut } from '@clerk/clerk-expo';
+import React, { useState, useEffect } from 'react';
+import { ClerkProvider, SignedIn, SignedOut, useSession } from '@clerk/clerk-expo';
 import * as SecureStore from "expo-secure-store";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -13,6 +13,9 @@ import BusinessInfo from "./src/LandingPage/BusinessInfo";
 
 import { config, closeConfig } from "./hooks/animation";
 import { AuthProvider } from './src/context/AuthContext';
+import { View, Text } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useAuth } from './src/context/AuthContext';
 
 const tokenCache = {
   getToken(key) {
@@ -26,6 +29,13 @@ const tokenCache = {
 const Stack = createNativeStackNavigator();
 
 function SignedInNavigator() {
+  const { origin } = useAuth();
+  const nav = useNavigation();
+  useEffect(() => {
+    if (origin === 'register') {
+      nav.navigate('BusinessInfo');
+    }
+  }, [origin]);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -91,6 +101,33 @@ function SignedOutNavigator() {
   );
 }
 
+const GetClerkToken = () => {
+  const { session } = useSession();
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      if (session) {
+        const token = await session.getToken();
+        console.log('Clerk JWT:', token);
+        setToken(token);
+      }
+    };
+
+    fetchToken();
+  }, [session]);
+
+  return (
+    <View>
+      {/* {token ? (
+        <Text>Your Clerk token: {token}</Text>
+      ) : (
+        <Text>Loading token...</Text>
+      )} */}
+    </View>
+  );
+};
+
 export default function App() {
   return (
     <AuthProvider>
@@ -98,6 +135,7 @@ export default function App() {
         <SignedIn>
           <NavigationContainer>
             <SignedInNavigator />
+            {/* <GetClerkToken /> */}
           </NavigationContainer>
         </SignedIn>
         <SignedOut>
