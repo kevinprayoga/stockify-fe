@@ -43,7 +43,7 @@ export default function Cart() {
                   <View className="flex-row items-center justify-between mt-[10]">
                     <Text className="text-[18px] font-s">Rp125.000</Text>
                     <View className="justify-center">
-                      <TouchableOpacity className="w-[35px] h-[35px] bg-[#5A4DF3] rounded-lg items-center justify-center">
+                      <TouchableOpacity className="w-[35px] h-[35px] bg-[#5A4DF3] rounded-lg mx-auto items-center justify-center">
                         <AntDesign name="plus" size={23} color="white" className=""/>
                       </TouchableOpacity>
                     </View>
@@ -65,7 +65,7 @@ export default function Cart() {
                   <View className="flex-row items-center justify-between mt-[10]">
                     <Text className="text-[18px] font-s">Rp125.000</Text>
                     <View className="justify-center">
-                      <TouchableOpacity className="w-[35px] h-[35px] bg-[#5A4DF3] rounded-lg items-center justify-center">
+                      <TouchableOpacity className="w-[35px] h-[35px] bg-[#5A4DF3] rounded-lg mx-auto items-center justify-center">
                         <AntDesign name="plus" size={23} color="white" className=""/>
                       </TouchableOpacity>
                     </View>

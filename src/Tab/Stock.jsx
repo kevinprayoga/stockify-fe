@@ -4,6 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons';
 import { images } from "../../constants";
 import { useFonts } from 'expo-font';
+import { useNavigation } from "@react-navigation/native";
 
 export default function Stock() {
   const [fontsLoaded] = useFonts({
@@ -14,6 +15,12 @@ export default function Stock() {
     "Poppins-Light": require('../../assets/fonts/Poppins-Light.ttf'),
   });
 
+  const nav = useNavigation();
+
+  const addProductPageHandler = () => {
+    nav.push("AddProduct")
+  };
+
   return (
     <View className="bg-[#F5F6F7]">
       <ScrollView className="h-screen bg-[#F5F6F7] mt-[50]">
@@ -22,7 +29,7 @@ export default function Stock() {
             <Text className="text-[20px] font-s">Item (43)</Text>
           </View>
           <View>
-            <TouchableOpacity className="h-[50] w-[130] rounded-3xl bg-[#5A4DF3] flex-row items-center justify-between px-[15]">
+            <TouchableOpacity onPress={addProductPageHandler} className="h-[50] w-[130] rounded-3xl bg-[#5A4DF3] flex-row items-center justify-between px-[15]">
               <View>
                 <Text className="text-white text-sm font-s">Tambah</Text>
                 <Text className="text-white text-sm font-s">Produk</Text>

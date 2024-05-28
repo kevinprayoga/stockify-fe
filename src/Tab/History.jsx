@@ -15,85 +15,148 @@ export default function History() {
 
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require('../../assets/fonts/Poppins-Bold.ttf'),
-    "Poppins-Regular": require('../../assets/fonts/Poppins-Regular.ttf')
+    "Poppins-SemiBold": require('../../assets/fonts/Poppins-SemiBold.ttf'),
+    "Poppins-Medium": require('../../assets/fonts/Poppins-Medium.ttf'),
+    "Poppins-Regular": require('../../assets/fonts/Poppins-Regular.ttf'),
+    "Poppins-Light": require('../../assets/fonts/Poppins-Light.ttf'),
   });
 
   return (
     <View className="bg-[#F5F6F7]">
-      <ScrollView className="mt-[30] h-screen bg-[#F5F6F7]">
-        <View className="items-center mt-[30]">
-          <Text className="text-xl font-h">Riwayat Transaksi</Text>
-        </View>
-        <View className="h-[40] mx-[27] mt-[20] flex-row bg-white rounded-xl">
-          <View className="w-1/2 items-center justify-center">
-            <TouchableOpacity 
-              onPress={handleSelesaiPress}
-              className={`items-center justify-center w-11/12 h-4/5 rounded-lg ${isSelesaiActive ? 'bg-[#5A4DF3]' : 'border border-gray-200'}`}>
-              <Text className={`text-[17px] font-h pt-[3] ${isSelesaiActive ? 'text-white' : 'text-black'}`}>Selesai</Text>
-            </TouchableOpacity>
-          </View>  
-          <View className="w-1/2 items-center justify-center">
-            <TouchableOpacity 
-              onPress={handleBatalPress} 
-              className={`items-center justify-center w-11/12 h-4/5 rounded-lg ${!isSelesaiActive ? 'bg-[#5A4DF3]' : 'border border-gray-200'}`}>
-              <Text className={`text-[17px] font-h pt-[3] ${!isSelesaiActive ? 'text-white' : 'text-black'}`}>Batal</Text>
-            </TouchableOpacity>
-          </View> 
-        </View>
-        <View>
+      <ScrollView className="mt-[50] h-screen bg-[#F5F6F7]">
+        <View className="justify-center items-center mx-[27] h-[50]">
+          <Text className="text-2xl font-s">Riwayat</Text>
+          <Text className="text-xl font-s">Transaksi</Text>
+        </View> 
+        
+        <View className="mt-[30] mb-[130px]">
           {/* Box Selesai */}
-          <View className="mx-[27] bg-white mt-[15] rounded-lg p-[15] shadow">
+          <View className="mb-[10] mx-[27] bg-white rounded-lg p-[15] shadow">
             {/* ID & Date*/}
             <View className="flex-row justify-between items-center border-b border-gray-200 pb-[8]">
-              <Text className="text-lg font-h">#0376</Text>
-              <Text className="text-[13px] text-gray-400 font-p">20/03/2024</Text>
+              <Text className="text-lg font-b">#0376</Text>
+              <Text className="text-[13px] text-gray-400 font-r">20/03/2024</Text>
             </View>
             {/* Item & Total Harga */}
             <View className="flex-row justify-between items-center border-bottom pt-[8]">
               <View className="flex-row">
-                <Text className="text-[17px] font-h text-gray-500">Item: </Text><Text className="text-[17px] font-h">5</Text>
+                <Text className="text-[17px] font-l text-gray-500">Jumlah Item: </Text><Text className="text-[17px] font-s">5</Text>
               </View>
-              <View className="flex-row">
-                <Text className="text-[17px] font-h text-gray-500">Total: </Text><Text className="text-[17px] font-h">Rp200.000</Text>
+              <View className="">
+                <View className="flex-row">
+                  <Text className="text-[15px] font-l text-gray-500">Total: </Text><Text className="text-[15px] font-b">Rp200.000</Text>
+                </View>
+                {/* Detail Button */}
+                <View className="flex-row justify-end items-center border-bottom mt-[10]">
+                  <TouchableOpacity className="bg-[#5A4DF3] w-[80] py-[5] rounded-lg items-center">
+                    <Text className="text-white text-[15px] font-s pt-[3]">Detail</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-            {/* Status Pembyaran & Detail Button */}
-            <View className="flex-row justify-between items-center border-bottom pt-[25]">
-              <View className="flex-row">
-                <Text className="text-[#27AE60] font-h">Pembayaran Sukses</Text>
-              </View>
-              <TouchableOpacity className="bg-[#5A4DF3] w-[80] py-[5] rounded-lg items-center">
-                <Text className="text-white text-[15px] font-h pt-[3]">Detail</Text>
-              </TouchableOpacity>
             </View>
           </View>
 
-          {/* Box Batal */}
-          <View className="mx-[27] bg-white mt-[15] rounded-lg p-[15] shadow">
+          <View className="mb-[10] mx-[27] bg-white rounded-lg p-[15] shadow">
             {/* ID & Date*/}
             <View className="flex-row justify-between items-center border-b border-gray-200 pb-[8]">
-              <Text className="text-lg font-h">#0376</Text>
-              <Text className="text-[13px] text-gray-400 font-p">20/03/2024</Text>
+              <Text className="text-lg font-b">#0376</Text>
+              <Text className="text-[13px] text-gray-400 font-r">20/03/2024</Text>
             </View>
             {/* Item & Total Harga */}
             <View className="flex-row justify-between items-center border-bottom pt-[8]">
               <View className="flex-row">
-                <Text className="text-[17px] font-h text-gray-500">Item: </Text><Text className="text-[17px] font-h">5</Text>
+                <Text className="text-[17px] font-l text-gray-500">Jumlah Item: </Text><Text className="text-[17px] font-s">5</Text>
               </View>
-              <View className="flex-row">
-                <Text className="text-[17px] font-h text-gray-500">Total: </Text><Text className="text-[17px] font-h">Rp200.000</Text>
+              <View className="">
+                <View className="flex-row">
+                  <Text className="text-[15px] font-l text-gray-500">Total: </Text><Text className="text-[15px] font-b">Rp200.000</Text>
+                </View>
+                {/* Detail Button */}
+                <View className="flex-row justify-end items-center border-bottom mt-[10]">
+                  <TouchableOpacity className="bg-[#5A4DF3] w-[80] py-[5] rounded-lg items-center">
+                    <Text className="text-white text-[15px] font-s pt-[3]">Detail</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-            {/* Status Pembyaran & Detail Button */}
-            <View className="flex-row justify-between items-center border-bottom pt-[25]">
-              <View className="flex-row">
-                <Text className="text-[#F13131] font-h">Pembayaran Batal</Text>
-              </View>
-              <TouchableOpacity className="bg-[#5A4DF3] w-[80] py-[5] rounded-lg items-center">
-                <Text className="text-white text-[15px] font-h pt-[3]">Detail</Text>
-              </TouchableOpacity>
             </View>
           </View>
+
+          <View className="mb-[10] mx-[27] bg-white rounded-lg p-[15] shadow">
+            {/* ID & Date*/}
+            <View className="flex-row justify-between items-center border-b border-gray-200 pb-[8]">
+              <Text className="text-lg font-b">#0376</Text>
+              <Text className="text-[13px] text-gray-400 font-r">20/03/2024</Text>
+            </View>
+            {/* Item & Total Harga */}
+            <View className="flex-row justify-between items-center border-bottom pt-[8]">
+              <View className="flex-row">
+                <Text className="text-[17px] font-l text-gray-500">Jumlah Item: </Text><Text className="text-[17px] font-s">5</Text>
+              </View>
+              <View className="">
+                <View className="flex-row">
+                  <Text className="text-[15px] font-l text-gray-500">Total: </Text><Text className="text-[15px] font-b">Rp200.000</Text>
+                </View>
+                {/* Detail Button */}
+                <View className="flex-row justify-end items-center border-bottom mt-[10]">
+                  <TouchableOpacity className="bg-[#5A4DF3] w-[80] py-[5] rounded-lg items-center">
+                    <Text className="text-white text-[15px] font-s pt-[3]">Detail</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          <View className="mb-[10] mx-[27] bg-white rounded-lg p-[15] shadow">
+            {/* ID & Date*/}
+            <View className="flex-row justify-between items-center border-b border-gray-200 pb-[8]">
+              <Text className="text-lg font-b">#0376</Text>
+              <Text className="text-[13px] text-gray-400 font-r">20/03/2024</Text>
+            </View>
+            {/* Item & Total Harga */}
+            <View className="flex-row justify-between items-center border-bottom pt-[8]">
+              <View className="flex-row">
+                <Text className="text-[17px] font-l text-gray-500">Jumlah Item: </Text><Text className="text-[17px] font-s">5</Text>
+              </View>
+              <View className="">
+                <View className="flex-row">
+                  <Text className="text-[15px] font-l text-gray-500">Total: </Text><Text className="text-[15px] font-b">Rp200.000</Text>
+                </View>
+                {/* Detail Button */}
+                <View className="flex-row justify-end items-center border-bottom mt-[10]">
+                  <TouchableOpacity className="bg-[#5A4DF3] w-[80] py-[5] rounded-lg items-center">
+                    <Text className="text-white text-[15px] font-s pt-[3]">Detail</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          <View className="mb-[10] mx-[27] bg-white rounded-lg p-[15] shadow">
+            {/* ID & Date*/}
+            <View className="flex-row justify-between items-center border-b border-gray-200 pb-[8]">
+              <Text className="text-lg font-b">#0376</Text>
+              <Text className="text-[13px] text-gray-400 font-r">20/03/2024</Text>
+            </View>
+            {/* Item & Total Harga */}
+            <View className="flex-row justify-between items-center border-bottom pt-[8]">
+              <View className="flex-row">
+                <Text className="text-[17px] font-l text-gray-500">Jumlah Item: </Text><Text className="text-[17px] font-s">5</Text>
+              </View>
+              <View className="">
+                <View className="flex-row">
+                  <Text className="text-[15px] font-l text-gray-500">Total: </Text><Text className="text-[15px] font-b">Rp200.000</Text>
+                </View>
+                {/* Detail Button */}
+                <View className="flex-row justify-end items-center border-bottom mt-[10]">
+                  <TouchableOpacity className="bg-[#5A4DF3] w-[80] py-[5] rounded-lg items-center">
+                    <Text className="text-white text-[15px] font-s pt-[3]">Detail</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          
         </View>
       </ScrollView>
     </View>
