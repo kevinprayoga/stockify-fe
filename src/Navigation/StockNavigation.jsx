@@ -6,6 +6,7 @@ import Cart from "../Tab/Cart";
 import History from "../Tab/History";
 import Profile from "../Tab/Profile";
 import AddProduct from "../Tab/AddProduct";
+import EditProduct from "../Tab/EditProduct";
 
 import { View, Text } from 'react-native';
 import { Entypo, Feather, MaterialCommunityIcons, FontAwesome5, Ionicons } from '@expo/vector-icons';
@@ -34,8 +35,8 @@ export default function StockNavigation() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="AddProduct"
-        component={AddProduct}
+        name="EditProduct"
+        component={EditProduct}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

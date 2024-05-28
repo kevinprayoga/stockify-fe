@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, Text, TouchableOpacity, View, Button, Image, StyleSheet, TextInput, ToastAndroid } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View, Button, Image, StyleSheet, TextInput, ToastAndroid, Modal } from "react-native";
 import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -8,7 +8,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Formik } from 'formik';
 import { images } from "../../constants";
 
-export default function AddProduct() {
+export default function EditProduct() {
     const [image, setImage] = useState(null);
 
     const pickImage = async () => {
@@ -88,7 +88,7 @@ export default function AddProduct() {
                                         { image? 
                                             <Image source={{uri:image}} className="w-full h-full border border-[#5A4DF3] rounded-xl"/>
                                             : <View className="w-full h-full border border-[#5A4DF3] rounded-xl items-center justify-center">
-                                                <Text className="font-b">Unggah Foto Produk</Text>
+                                                <Text className="font-b">Edit</Text>
                                             </View>
                                         }
                                         <View className="absolute w-full items-end p-[10]">
@@ -105,7 +105,7 @@ export default function AddProduct() {
                                 <View className="mt-[10]">
                                     <Text className="text-[#5A4DF3] pl-2 font-s">Nama Produk</Text>
                                     <TextInput 
-                                        
+                                        placeholder="Nama Produk"
                                         onChangeText={handleChange('productName')}
                                         onBlur={handleBlur('productName')}
                                         value={values.productName}
@@ -117,7 +117,7 @@ export default function AddProduct() {
                                     <View className="w-1/2 pr-1">
                                         <Text className="text-[#5A4DF3] pl-2 font-s">Harga Pokok</Text>
                                         <TextInput 
-                                            
+                                            placeholder="Harga Pokok"
                                             keyboardType="numeric"
                                             onChangeText={handleChange('cost')}
                                             onBlur={handleBlur('cost')}
@@ -128,6 +128,7 @@ export default function AddProduct() {
                                     <View className="w-1/2 pl-1">
                                         <Text className="text-[#5A4DF3] pl-2 font-s">Harga Jual</Text>
                                         <TextInput 
+                                            placeholder="Harga Jual"
                                             keyboardType="numeric"
                                             onChangeText={handleChange('price')}
                                             onBlur={handleBlur('price')}
@@ -165,34 +166,81 @@ export default function AddProduct() {
                                         </View>
                                     </View>
                                 </View>
-                                <View className="mt-[10]">
-                                    <TouchableOpacity 
-                                        onPress={handleSubmit}
-                                        className="bg-[#5A4DF3] h-[45] rounded-xl items-center justify-center"
-                                    >
-                                        <Text className="text-lg font-s text-white">Tambahkan Produk</Text>
-                                    </TouchableOpacity>
+                                <View className="mt-[10] flex-row">
+                                    <View className="w-1/2 pr-1">
+                                        <TouchableOpacity 
+                                            onPress={stockPageHandler}
+                                            className="border border-[#5A4DF3] h-[45] rounded-xl items-center justify-center"
+                                        >
+                                            <Text className="text-lg font-s text-[#5A4DF3]">Batal</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View className="w-1/2 pl-1">
+                                        <TouchableOpacity 
+                                            onPress={handleSubmit}
+                                            className="bg-[#5A4DF3] h-[45] rounded-xl items-center justify-center"
+                                        >
+                                            <Text className="text-lg font-s text-white">Simpan</Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                                 <View className="mt-[10]">
                                     <TouchableOpacity 
                                         onPress={stockPageHandler}
-                                        className="border border-[#5A4DF3] h-[45] rounded-xl items-center justify-center"
+                                        className="bg-[#F13131] h-[45] rounded-xl items-center justify-center"
                                     >
-                                        <Text className="text-lg font-s text-[#5A4DF3]">Batal</Text>
+                                        <Text className="text-lg font-s text-white">Hapus Produk</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
                         )}
                     </Formik>
                 </View>
-                
             </ScrollView>
+            <Modal visible={false}>
+                <View className="h-screen bg-gray-400 items-center justify-center">
+                    <View className="bg-white bg-opacity-30 h-[300] w-[240] rounded-3xl items-center">
+                        <Image source={images.save} className="mt-[30]"/>
+                        <Text className="font-b text-2xl text-[#5A4DF3] mt-[20]">Simpan Perubahan</Text>
+                        <Text className="font-l mt-[10]">Apakah Anda ingin</Text>
+                        <Text className="font-l">menyimpan perubahan?</Text>
+                        <View className="flex-row mt-[15]">
+                            <View className="pr-1">
+                                <TouchableOpacity className="w-[90] h-[30] rounded-lg border border-[#5A4DF3] items-center justify-center">
+                                    <Text className="text-[#5A4DF3] font-s">Batal</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View className="pl-1">
+                                <TouchableOpacity className="w-[90] h-[30] rounded-lg bg-[#5A4DF3] items-center justify-center">
+                                    <Text className="text-white font-s">Ya</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+            <Modal visible={false}>
+                <View className="h-screen bg-gray-400 items-center justify-center">
+                    <View className="bg-white bg-opacity-30 h-[300] w-[240] rounded-3xl items-center">
+                        <Image source={images.delete_icon} className="mt-[15]"/>
+                        <Text className="font-s text-2xl text-[#F13131] mt-[20]">Hapus Produk</Text>
+                        <Text className="font-l mt-[10]">Apakah Anda ingi menghapus</Text>
+                        <Text className="font-l">produk yang dimaksud?</Text>
+                        <View className="flex-row mt-[15]">
+                            <View className="pr-1">
+                                <TouchableOpacity className="w-[90] h-[30] rounded-lg border border-gray-600 items-center justify-center">
+                                    <Text className="text-gray-600 font-s">Batal</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View className="pl-1">
+                                <TouchableOpacity className="bg-[#F13131] w-[90] h-[30] rounded-lg items-center justify-center">
+                                    <Text className="text-white font-s">Hapus</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    customHeight: {
-        aspectRatio: 4 / 3, // This will set the aspect ratio to 4:3
-    },
-});

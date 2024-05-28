@@ -18,7 +18,7 @@ export default function Stock() {
   const nav = useNavigation();
 
   const addProductPageHandler = () => {
-    nav.push("AddProduct")
+    nav.push("EditProduct")
   };
 
   return (
@@ -53,8 +53,8 @@ export default function Stock() {
             {/* Col 1 */}
             <View className="w-1/2 h-[240]">
               <View className="bg-white h-full rounded-2xl mx-[5] shadow">
-                <View className="items-center justify-center h-1/2 bg-gray-400 rounded-xl m-[10]">
-                  <Text>Item1</Text>
+                <View className="items-center justify-center h-1/2 rounded-xl m-[10]">
+                  <Image source={images.placeholder} className="w-[140] h-[105] bg-white"></Image>
                 </View>
                 <View className="mx-[10]">
                   <Text className="text-[18px] font-b">(Nama Produk)</Text>
@@ -75,8 +75,8 @@ export default function Stock() {
             {/* Col 2 */}
             <View className="w-1/2 h-[240]">
               <View className="bg-white h-full rounded-2xl mx-[5] shadow">
-                <View className="items-center justify-center h-1/2 bg-gray-400 rounded-xl m-[10]">
-                  <Text>Item1</Text>
+                <View className="items-center justify-center h-1/2 rounded-xl m-[10]">
+                  <Image source={images.placeholder} className="w-[140] h-[105] bg-white"/>
                 </View>
                 <View className="mx-[10]">
                   <Text className="text-[18px] font-b">(Nama Produk)</Text>

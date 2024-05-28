@@ -26,9 +26,12 @@ export default function TabNavigation() {
           borderTopRightRadius: 20,
           paddingHorizontal: 10,
           height: 80,
+          display: '',
         },
+        tabBarHideOnKeyboard: true,
         tabBarShowLabel: false,
       }}
+
     >
       <Tab.Screen
         name="Home"
