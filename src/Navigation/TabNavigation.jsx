@@ -21,7 +21,6 @@ export default function TabNavigation() {
         tabBarInactiveTintColor: "#FFFFFF",
         tabBarStyle: { 
           backgroundColor: "#5A4DF3", 
-          height: 70, 
           borderTopLeftRadius: 20, 
           borderTopRightRadius: 20,
           paddingHorizontal: 10,
@@ -103,14 +102,14 @@ const styles = {
     borderRadius: 20,
     paddingHorizontal: 10,
     paddingVertical: 10,
-    marginTop: 20,
+    marginTop: 10,
     height: 44,
   },
   defaultTab: {
     alignItems: 'center',
     justifyContent: 'center',
     height: 44,
-    marginTop: 20,
+    marginTop: 10,
   },
   focusedText: {
     color: '#5A4DF3',

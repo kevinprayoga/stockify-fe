@@ -1,49 +1,65 @@
 import React from "react";
-import { Image, TouchableOpacity, Text, View, TextInput } from "react-native";
+import { Image, TouchableOpacity, Text, View, TextInput, ScrollView } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons';
 import { images } from "../../constants";
-
+import { useFonts } from 'expo-font';
 
 export default function Stock() {
+  const [fontsLoaded] = useFonts({
+    "Poppins-Bold": require('../../assets/fonts/Poppins-Bold.ttf'),
+    "Poppins-SemiBold": require('../../assets/fonts/Poppins-SemiBold.ttf'),
+    "Poppins-Medium": require('../../assets/fonts/Poppins-Medium.ttf'),
+    "Poppins-Regular": require('../../assets/fonts/Poppins-Regular.ttf'),
+    "Poppins-Light": require('../../assets/fonts/Poppins-Light.ttf'),
+  });
+
   return (
-    <View className="h-screen bg-[#F5F6F7] flex">
-      <Text className="font-medium text-3xl text-left pl-8 pt-16 ">Item(43)</Text>
-      <TouchableOpacity className="h-[45] w-[135] rounded-3xl bg-[#5A4DF3] flex ml-auto mr-6 -my-8 ">
-        <Text className="font-medium text-white -m-12 -mr-7 py-3 text-xl text-right pr-12 font-poppins -my-0.5">Add Item</Text>
-        <View className="-mt-8 mx-3 -my-9">
-            <MaterialIcons name="add-circle" size={30} color="white"/>      
-        </View>
-      </TouchableOpacity>  
-      
-
-      <View className="flex-row items-center bg-white rounded-lg px-4 shadow h-[45] mx-[27] my-[45]">
+    <View className="bg-[#F5F6F7]">
+      <ScrollView className="h-screen bg-[#F5F6F7] mt-[50]">
+        <View className="flex-row justify-between items-center mx-[27]">
+          <View>
+            <Text className="text-[20px] font-s">Item (43)</Text>
+          </View>
+          <View>
+            <TouchableOpacity className="h-[50] w-[130] rounded-3xl bg-[#5A4DF3] flex-row items-center justify-between px-[15]">
+              <View>
+                <Text className="text-white text-sm font-s">Tambah</Text>
+                <Text className="text-white text-sm font-s">Produk</Text>
+              </View>
+              <View>
+                <MaterialIcons name="add-circle" size={30} color="white"/>      
+              </View>
+            </TouchableOpacity> 
+          </View>
+        </View> 
+        
+        <View className="flex-row items-center bg-white rounded-lg px-4 shadow h-[45] mx-[27] mt-[30] mb-[5]">
           <Octicons name="search" size={20} color="#9CA3AF"/>
-          <TextInput placeholder="Cari Produk" placeholderTextColor="#9CA3AF" className="font-normal text-base ml-2 -mt-1"></TextInput>
-      </View>  
+          <TextInput placeholder="Cari Produk" placeholderTextColor="#9CA3AF" className="ml-[10] font-l bg-white text-base rounded-lg h-[45] flex-1"></TextInput>
+        </View> 
 
-      <View className="-mt-8">
-      <View className="items-center mx-[20]">
+
+        <View className="items-center mx-[20] mb-[130px]">
           {/* Row 1 */}
           <View className="w-full flex-row my-[10] justify-between ">
             {/* Col 1 */}
             <View className="w-1/2 h-[240]">
-              <View className="bg-white h-full rounded-2xl mx-[5]">
+              <View className="bg-white h-full rounded-2xl mx-[5] shadow">
                 <View className="items-center justify-center h-1/2 bg-gray-400 rounded-xl m-[10]">
                   <Text>Item1</Text>
                 </View>
                 <View className="mx-[10]">
-                  <Text className="text-xl font-bold ml12">(Nama Produk)</Text>
+                  <Text className="text-[18px] font-b">(Nama Produk)</Text>
                   <View className="flex-row">
-                    <Text className="font-bold ml-1">10</Text><Text> di stok</Text>
+                    <Text className="font-s">10</Text><Text className="font-r text-gray-500"> di stok</Text>
                   </View>
                   <View className="flex-row items-center justify-between mt-[10]">
-                    <Text className="text-[21px] font-bold ml-1 mt-2">Rp125.000</Text>
+                    <Text className="text-[18px] font-s">Rp125.000</Text>
                     <View className="justify-center">
-                      <TouchableOpacity className="w-[40px] h-[40px] bg-[#5A4DF3] rounded-lg mx-auto"></TouchableOpacity>
-                      <View className="-mt-9 ml-2 mr-2">
-                        <Image source={images.stocklogo} className="h-7 w-7"/>
-                      </View>
+                      <TouchableOpacity className="w-[35px] h-[35px] bg-[#5A4DF3] rounded-lg mx-auto items-center justify-center">
+                        <Image source={images.stocklogo} className="h-6 w-6"/> 
+                      </TouchableOpacity>
                     </View>
                   </View>
                 </View>
@@ -51,22 +67,21 @@ export default function Stock() {
             </View>
             {/* Col 2 */}
             <View className="w-1/2 h-[240]">
-              <View className="bg-white h-full rounded-2xl mx-[5]">
+              <View className="bg-white h-full rounded-2xl mx-[5] shadow">
                 <View className="items-center justify-center h-1/2 bg-gray-400 rounded-xl m-[10]">
-                  <Text>Item2</Text>
+                  <Text>Item1</Text>
                 </View>
                 <View className="mx-[10]">
-                  <Text className="text-xl font-bold">(Nama Produk)</Text>
+                  <Text className="text-[18px] font-b">(Nama Produk)</Text>
                   <View className="flex-row">
-                    <Text className="font-bold ml-1">5</Text><Text> di stok</Text>
+                    <Text className="font-s">10</Text><Text className="font-r text-gray-500"> di stok</Text>
                   </View>
                   <View className="flex-row items-center justify-between mt-[10]">
-                  <Text className="text-[21px] font-bold ml-1 mt-2">Rp15.000</Text>
+                    <Text className="text-[18px] font-s">Rp125.000</Text>
                     <View className="justify-center">
-                      <TouchableOpacity className="w-[40px] h-[40px] bg-[#5A4DF3] rounded-lg mx-auto"></TouchableOpacity>
-                      <View className="-mt-9 ml-2 mr-2">
-                        <Image source={images.stocklogo} className="h-7 w-7"/>
-                      </View>
+                      <TouchableOpacity className="w-[35px] h-[35px] bg-[#5A4DF3] rounded-lg mx-auto items-center justify-center">
+                        <Image source={images.stocklogo} className="h-6 w-6"/> 
+                      </TouchableOpacity>
                     </View>
                   </View>
                 </View>
@@ -77,22 +92,21 @@ export default function Stock() {
           <View className="w-full flex-row my-[10] justify-between ">
             {/* Col 1 */}
             <View className="w-1/2 h-[240]">
-              <View className="bg-white h-full rounded-2xl mx-[5]">
+              <View className="bg-white h-full rounded-2xl mx-[5] shadow">
                 <View className="items-center justify-center h-1/2 bg-gray-400 rounded-xl m-[10]">
                   <Text>Item1</Text>
                 </View>
                 <View className="mx-[10]">
-                  <Text className="text-xl font-bold">(Nama Produk)</Text>
+                  <Text className="text-[18px] font-b">(Nama Produk)</Text>
                   <View className="flex-row">
-                    <Text className="font-bold ml-1">10</Text><Text> di stok</Text>
+                    <Text className="font-s">10</Text><Text className="font-r text-gray-500"> di stok</Text>
                   </View>
                   <View className="flex-row items-center justify-between mt-[10]">
-                  <Text className="text-[21px] font-bold ml-1 mt-2">Rp25.000</Text>
+                    <Text className="text-[18px] font-s">Rp125.000</Text>
                     <View className="justify-center">
-                      <TouchableOpacity className="w-[40px] h-[40px] bg-[#5A4DF3] rounded-lg mx-auto"></TouchableOpacity>
-                      <View className="-mt-9 ml-2 mr-2">
-                        <Image source={images.stocklogo} className="h-7 w-7"/>
-                      </View>
+                      <TouchableOpacity className="w-[35px] h-[35px] bg-[#5A4DF3] rounded-lg mx-auto items-center justify-center">
+                        <Image source={images.stocklogo} className="h-6 w-6"/> 
+                      </TouchableOpacity>
                     </View>
                   </View>
                 </View>
@@ -100,22 +114,68 @@ export default function Stock() {
             </View>
             {/* Col 2 */}
             <View className="w-1/2 h-[240]">
-              <View className="bg-white h-full rounded-2xl mx-[5]">
+              <View className="bg-white h-full rounded-2xl mx-[5] shadow">
                 <View className="items-center justify-center h-1/2 bg-gray-400 rounded-xl m-[10]">
-                  <Text>Item2</Text>
+                  <Text>Item1</Text>
                 </View>
                 <View className="mx-[10]">
-                  <Text className="text-xl font-bold">(Nama Produk)</Text>
+                  <Text className="text-[18px] font-b">(Nama Produk)</Text>
                   <View className="flex-row">
-                    <Text className="font-bold ml-1">5</Text><Text> di stok</Text>
+                    <Text className="font-s">10</Text><Text className="font-r text-gray-500"> di stok</Text>
                   </View>
                   <View className="flex-row items-center justify-between mt-[10]">
-                  <Text className="text-[21px] font-bold ml-1 mt-2">Rp152.000</Text>
+                    <Text className="text-[18px] font-s">Rp125.000</Text>
                     <View className="justify-center">
-                      <TouchableOpacity className="w-[40px] h-[40px] bg-[#5A4DF3] rounded-lg mx-auto"></TouchableOpacity>
-                      <View className="-mt-9 ml-2 mr-2">
-                        <Image source={images.stocklogo} className="h-7 w-7"/>
-                      </View>
+                      <TouchableOpacity className="w-[35px] h-[35px] bg-[#5A4DF3] rounded-lg mx-auto items-center justify-center">
+                        <Image source={images.stocklogo} className="h-6 w-6"/> 
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+          {/* Row 3 */}
+          <View className="w-full flex-row my-[10] justify-between ">
+            {/* Col 1 */}
+            <View className="w-1/2 h-[240]">
+              <View className="bg-white h-full rounded-2xl mx-[5] shadow">
+                <View className="items-center justify-center h-1/2 bg-gray-400 rounded-xl m-[10]">
+                  <Text>Item1</Text>
+                </View>
+                <View className="mx-[10]">
+                  <Text className="text-[18px] font-b">(Nama Produk)</Text>
+                  <View className="flex-row">
+                    <Text className="font-s">10</Text><Text className="font-r text-gray-500"> di stok</Text>
+                  </View>
+                  <View className="flex-row items-center justify-between mt-[10]">
+                    <Text className="text-[18px] font-s">Rp125.000</Text>
+                    <View className="justify-center">
+                      <TouchableOpacity className="w-[35px] h-[35px] bg-[#5A4DF3] rounded-lg mx-auto items-center justify-center">
+                        <Image source={images.stocklogo} className="h-6 w-6"/> 
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+            {/* Col 2 */}
+            <View className="w-1/2 h-[240]">
+              <View className="bg-white h-full rounded-2xl mx-[5] shadow">
+                <View className="items-center justify-center h-1/2 bg-gray-400 rounded-xl m-[10]">
+                  <Text>Item1</Text>
+                </View>
+                <View className="mx-[10]">
+                  <Text className="text-[18px] font-b">(Nama Produk)</Text>
+                  <View className="flex-row">
+                    <Text className="font-s">10</Text><Text className="font-r text-gray-500"> di stok</Text>
+                  </View>
+                  <View className="flex-row items-center justify-between mt-[10]">
+                    <Text className="text-[18px] font-s">Rp125.000</Text>
+                    <View className="justify-center">
+                      <TouchableOpacity className="w-[35px] h-[35px] bg-[#5A4DF3] rounded-lg mx-auto items-center justify-center">
+                        <Image source={images.stocklogo} className="h-6 w-6"/> 
+                      </TouchableOpacity>
                     </View>
                   </View>
                 </View>
@@ -123,7 +183,8 @@ export default function Stock() {
             </View>
           </View>
         </View>
-      </View>      
+  
+      </ScrollView>    
     </View>
 
     
