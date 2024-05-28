@@ -41,7 +41,6 @@ export default function BusinessInfo() {
 
     try {
       const token = await session.getToken();
-      console.log('Token:', token);
       /** Ganti Ip sesuai ip address network kalian di laptop masing2 */
       const response = await fetch(`${API_URL}:${PORT}/business`, {
         method: 'POST',
@@ -51,11 +50,10 @@ export default function BusinessInfo() {
         },
         body: JSON.stringify(payload)
       });
-      console.log('testing');
       if (response.ok) {
         const responseData = await response.json();
         console.log('Response data:', responseData);
-        nav.push("TabHome");
+        nav.push('TabHome');
         setSubmitPressed(false);
         setOrigin(null);
       } else {
