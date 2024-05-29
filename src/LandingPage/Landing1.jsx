@@ -13,14 +13,15 @@ export default function Landing1() {
 
   return (
     <View className='flex items-center bg-bg h-screen'>
-      <StatusBar barStyle="dark-content" />
-      <Image
-        source={images.landing}
-        className='mt-96'
-      />
-      <TouchableOpacity onPress={signHandler} className='bg-primary mt-7 px-10 py-3 rounded-lg shadow-[#3A8DEC]'>
-        <Text className='font-p text-lg text-white font-semibold'>Get Started</Text>
-      </TouchableOpacity>
+      <View className="flex items-center justify-center h-screen">
+        <StatusBar barStyle="dark-content" />
+        <Image
+          source={images.landing}
+        />
+        <TouchableOpacity onPress={signHandler} className='bg-primary mt-7 px-10 py-3 rounded-lg shadow shadow-[#3A8DEC]'>
+          <Text className='font-semibold text-xl text-white text-center'>Ayo Mulai</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

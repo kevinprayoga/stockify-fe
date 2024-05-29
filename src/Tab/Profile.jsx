@@ -2,8 +2,19 @@ import React from "react";
 import { Image, TouchableOpacity, Text, View, TextInput } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 import { images } from "../../constants";
+import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "@clerk/clerk-expo";
 
 export default function Profile() {
+  const nav = useNavigation();
+  const { signOut, isLoaded } = useAuth();
+
+  const signOutHandler = async() => {
+    if (!isLoaded) {
+      return null;
+    }
+    await signOut();
+  }
   return (
     <View>
       <View>
@@ -35,7 +46,7 @@ export default function Profile() {
       </View>
     </TouchableOpacity>
     
-    <TouchableOpacity>
+    <TouchableOpacity onPress={signOutHandler}>
       <View className="flex-row items-center bg-white rounded-xl px-4 shadow h-[88] mx-[27] my-[10]">
         <View className= "bg-[#555555] opacity-5 rounded-full h-[60] w-[60]"></View>
         <View className="-mx-[41]">
