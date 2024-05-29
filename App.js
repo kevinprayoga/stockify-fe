@@ -13,7 +13,7 @@ import BusinessInfo from "./src/LandingPage/BusinessInfo";
 
 import { config, closeConfig } from "./hooks/animation";
 import { AuthProvider } from './src/context/AuthContext';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from './src/context/AuthContext';
 
