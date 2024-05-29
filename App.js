@@ -5,7 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { config, closeConfig } from "./hooks/animation";
-import HelpSupport from "./src/Tab/HelpSupport";
+import MyAccount from "./src/Tab/MyAccount";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -26,8 +26,8 @@ export default function App() {
         animation="fade"
       >
         <Stack.Screen
-          name="HelpSupport"
-          component={HelpSupport} 
+          name="MyAccount"
+          component={MyAccount} 
           options={{
             headerShown: false,
           }}
