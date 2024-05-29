@@ -1,12 +1,14 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { Image, TouchableOpacity, Text, View, TextInput, ScrollView } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons';
 import { images } from "../../constants";
 import { useFonts } from 'expo-font';
 import { useNavigation } from "@react-navigation/native";
+import { useSession } from "@clerk/clerk-expo";
 
 export default function Stock() {
+
   const [fontsLoaded] = useFonts({
     "Poppins-Bold": require('../../assets/fonts/Poppins-Bold.ttf'),
     "Poppins-SemiBold": require('../../assets/fonts/Poppins-SemiBold.ttf'),
@@ -17,8 +19,23 @@ export default function Stock() {
 
   const nav = useNavigation();
 
+  const { session } = useSession();
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      if (session) {
+        const token = await session.getToken();
+        console.log('Clerk JWT:', token);
+        setToken(token);
+      }
+    };
+    console.log("AAA");
+    fetchToken();
+  }, [session]);
+
   const addProductPageHandler = () => {
-    nav.push("EditProduct")
+    nav.push("AddProduct")
   };
 
   return (

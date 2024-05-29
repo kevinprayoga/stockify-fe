@@ -35,8 +35,8 @@ export default function StockNavigation() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="EditProduct"
-        component={EditProduct}
+        name="AddProduct"
+        component={AddProduct}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

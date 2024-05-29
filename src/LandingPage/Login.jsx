@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Text, View, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons, Feather } from '@expo/vector-icons';
@@ -16,6 +16,7 @@ export default function Login() {
 
   const { setOrigin } = useAuth();
   const nav = useNavigation();
+
 
   const backHandler = () => {
     nav.navigate("Landing2");
