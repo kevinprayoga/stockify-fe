@@ -1,15 +1,45 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, TouchableOpacity, Text, View, Modal } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 import { images } from "../../constants";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth, useUser } from "@clerk/clerk-expo";
+import { API_URL, PORT } from '@env';
+import { useSession } from "@clerk/clerk-react";
 
 export default function Profile() {
   const nav = useNavigation();
   const { signOut, isLoaded } = useAuth();
   const { user } = useUser();
   const [modalVisible, setModalVisible] = useState(false);
+  const [businessName, setBusinessName] = useState('');
+  const { session } = useSession();
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const token = await session.getToken();
+  
+      /** Melakukan GET BusinessInfo */
+      const businessResponse = await fetch(`${API_URL}:${PORT}/business`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      console.log('Token:');
+      if (!businessResponse.ok) {
+        throw new Error("Failed to fetch business info");
+      }
+      const businessResult = await businessResponse.json();
+      setBusinessName(businessResult.data[0].businessName);
+      console.log('Business Name:', businessName);
+    } catch {
+      console.error("Error fetching business info");
+    }
+  };
 
   const signOutHandler = () => {
     if (!isLoaded) {
@@ -54,7 +84,7 @@ export default function Profile() {
         </View>
         <View className="flex ml-3">
           <Text className="font-semibold text-2xl text-white">{user.fullName}</Text>
-          <Text className="font-semibold text-md text-white text-left">Retail-Grosir</Text>
+          <Text className="font-semibold text-md text-white text-left">{businessName}</Text>
         </View>
       </View>
 
