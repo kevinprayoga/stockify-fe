@@ -11,6 +11,9 @@ import aboutappillustration from '../assets/images/aboutappillustration.png';
 import splash from '../assets/images/splash.png';
 import faq from '../assets/images/faq.png';
 import google from '../assets/images/google.png';
+import placeholder from '../assets/images/placeholder.png';
+import save from '../assets/images/save.png';
+import delete_icon from '../assets/images/delete.png';
 
 export default {
   landing,
@@ -25,5 +28,8 @@ export default {
   aboutappillustration,
   splash,
   faq,
-  google
+  google,
+  placeholder,
+  save, 
+  delete_icon
 }

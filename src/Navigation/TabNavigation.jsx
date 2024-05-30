@@ -6,6 +6,7 @@ import Stock from "../Tab/Stock";
 import Cart from "../Tab/Cart";
 import History from "../Tab/History";
 import Profile from "../Tab/Profile";
+import StockNavigation from "./StockNavigation";
 
 import { View, Text } from 'react-native';
 import { Entypo, Feather, MaterialCommunityIcons, FontAwesome5, Ionicons } from '@expo/vector-icons';
@@ -21,14 +22,16 @@ export default function TabNavigation() {
         tabBarInactiveTintColor: "#FFFFFF",
         tabBarStyle: { 
           backgroundColor: "#5A4DF3", 
-          height: 70, 
           borderTopLeftRadius: 20, 
           borderTopRightRadius: 20,
           paddingHorizontal: 10,
           height: 80,
+          display: '',
         },
+        tabBarHideOnKeyboard: true,
         tabBarShowLabel: false,
       }}
+
     >
       <Tab.Screen
         name="Home"
@@ -44,7 +47,7 @@ export default function TabNavigation() {
       />
       <Tab.Screen
         name="Stock"
-        component={Stock}
+        component={StockNavigation}
         options={{
           tabBarIcon: ({ focused, size }) => (
             <View style={focused ? styles.focusedTab : styles.defaultTab}>
@@ -103,14 +106,14 @@ const styles = {
     borderRadius: 20,
     paddingHorizontal: 10,
     paddingVertical: 10,
-    marginTop: 20,
+    marginTop: 10,
     height: 44,
   },
   defaultTab: {
     alignItems: 'center',
     justifyContent: 'center',
     height: 44,
-    marginTop: 20,
+    marginTop: 10,
   },
   focusedText: {
     color: '#5A4DF3',
