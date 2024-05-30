@@ -10,6 +10,7 @@ import stocklogo from '../assets/images/stocklogo.png';
 import aboutappillustration from '../assets/images/aboutappillustration.png';
 import splash from '../assets/images/splash.png';
 import faq from '../assets/images/faq.png';
+import logout2 from '../assets/images/logout2.png';
 import google from '../assets/images/google.png';
 import placeholder from '../assets/images/placeholder.png';
 import save from '../assets/images/save.png';
@@ -28,6 +29,7 @@ export default {
   aboutappillustration,
   splash,
   faq,
+  logout2,
   google,
   placeholder,
   save, 

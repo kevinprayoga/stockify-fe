@@ -2,11 +2,10 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import Home from "../Tab/Home";
-import Stock from "../Tab/Stock";
 import Cart from "../Tab/Cart";
 import History from "../Tab/History";
-import Profile from "../Tab/Profile";
 import StockNavigation from "./StockNavigation";
+import ProfileNavigation from "./ProfileNavigation";
 import HistoryNavigation from "./HistoryNavigation";
 
 import { View, Text } from 'react-native';
@@ -84,7 +83,7 @@ export default function TabNavigation() {
       />
       <Tab.Screen
         name="Profile"
-        component={Profile}
+        component={ProfileNavigation}
         options={{
           tabBarIcon: ({ focused, size }) => (
             <View style={focused ? styles.focusedTab : styles.defaultTab}>

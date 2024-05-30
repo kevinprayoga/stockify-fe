@@ -1,7 +1,8 @@
 import React from "react";
 import { View } from "react-native";
-import { BarChart, Grid, XAxis, YAxis } from "react-native-svg-charts";
+import { BarChart, XAxis, YAxis } from "react-native-svg-charts";
 import { Text } from "react-native-svg";
+import { G, Line } from "react-native-svg";  // Import additional SVG components
 
 const CustomBarChart = ({ data = [] }) => {
   const contentInset = { top: 20, bottom: 20 };
@@ -30,6 +31,24 @@ const CustomBarChart = ({ data = [] }) => {
 
   const yAxisData = data.every(item => item.value === 0) ? [0, 50000, 100000, 150000, 200000] : data.map(item => item.value);
 
+  const CustomGrid = ({ x, y, ticks }) => (
+    <G>
+      {
+        // Horizontal grid
+        ticks.map(tick => (
+          <Line
+            key={tick}
+            x1={'0%'}
+            x2={'100%'}
+            y1={y(tick)}
+            y2={y(tick)}
+            stroke={'rgba(0,0,0,0.2)'}
+          />
+        ))
+      }
+    </G>
+  );
+
   return (
     <View style={{ height: 300, flexDirection: 'row' }}>
       <YAxis
@@ -52,7 +71,7 @@ const CustomBarChart = ({ data = [] }) => {
           spacingInner={0.5}
           gridMin={5}
         >
-          <Grid />
+          <CustomGrid />
           <Labels />
         </BarChart>
         <XAxis
