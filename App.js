@@ -13,6 +13,7 @@ import BusinessInfo from "./src/LandingPage/BusinessInfo";
 
 import { config, closeConfig } from "./hooks/animation";
 import MyAccount from "./src/Tab/MyAccount";
+import Profile from './src/Tab/Profile';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -40,15 +41,15 @@ function SignedInNavigator() {
         animation="fade"
       >
         <Stack.Screen
-          name="MyAccount"
-          component={MyAccount} 
+          name="Landing1"
+          component={Landing2} 
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
-          name="Landing2"
-          component={Landing2} 
+          name="Profile"
+          component={Profile} 
           options={{
             headerShown: false,
           }}
@@ -56,4 +57,5 @@ function SignedInNavigator() {
       </Stack.Navigator>
     </NavigationContainer>
   );
+}
 }

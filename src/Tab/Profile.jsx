@@ -15,6 +15,20 @@ export default function Profile() {
     }
     await signOut();
   }
+
+  const aboutPageHandler = () => {
+    nav.push("AboutApp")
+  }
+
+  const helpPageHandler = () => {
+    nav.push("HelpSupport")
+  }
+
+  const myAccountPageHandler = () => {
+    nav.push("MyAccount")
+  }
+
+
   return (
     <View>
       <View>
@@ -32,7 +46,7 @@ export default function Profile() {
       </View>
     </TouchableOpacity>
 
-    <TouchableOpacity>
+    <TouchableOpacity onPress={myAccountPageHandler}>
       <View className="flex-row items-center bg-white rounded-xl px-4 shadow h-[88] mx-[27] my-[10]">
         <View className= "bg-[#555555] opacity-5 rounded-full h-[60] w-[60]"></View>
         <View className="-mx-[44]">
@@ -64,7 +78,7 @@ export default function Profile() {
         <Text className="text-left ml-10 font-p font-medium text-lg mt-3" >More</Text>
       </View>
     
-    <TouchableOpacity>
+    <TouchableOpacity onPress={helpPageHandler}>
       <View className="flex-row items-center bg-white rounded-xl px-4 shadow h-[88] mx-[27] my-[10]">
         <View className= "bg-[#555555] opacity-5 rounded-full h-[60] w-[60]"></View>
         <View className="-mx-[43]">
@@ -77,7 +91,7 @@ export default function Profile() {
       </View>
     </TouchableOpacity>
 
-    <TouchableOpacity>
+    <TouchableOpacity onPress={aboutPageHandler}>
       <View className="flex-row items-center bg-white rounded-xl px-4 shadow h-[88] mx-[27] my-[10]">
         <View className= "bg-[#555555] opacity-5 rounded-full h-[60] w-[60]"></View>
         <View className="-mx-[44]">
