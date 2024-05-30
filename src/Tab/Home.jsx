@@ -29,14 +29,12 @@ export default function Home() {
       const token = await session.getToken();
 
       /** Melakukan GET BusinessInfo */
-      console.log(API_URL, PORT);
-      console.log(token);
       const businessResponse = await fetch(`${API_URL}:${PORT}/business`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
       });
-      
+      console.log('Token:');
       if (!businessResponse.ok) {
         throw new Error("Failed to fetch business info");
       }
@@ -104,7 +102,7 @@ export default function Home() {
     <Provider>
       <View className="bg-bg h-screen">
         <View className="flex h-screen">
-          <ScrollView className="flex mx-6 my-20 ">
+          <ScrollView className="flex mx-6 my-20" contentContainerStyle={{ paddingBottom: 40 }}>
             <View>
               <Text className="font-m text-black text-2xl font-medium">Selamat datang, {user.firstName}!</Text>
               <Text className="font-r text-vSmallFont mt-0.5">Semangat Pagi!</Text>
@@ -195,4 +193,4 @@ export default function Home() {
       </View>
     </Provider>
   );
-}
+};

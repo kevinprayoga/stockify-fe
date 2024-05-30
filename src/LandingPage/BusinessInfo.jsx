@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Text, TextInput, TouchableOpacity, View, ScrollView, KeyboardAvoidingView, Platform, BackHandler, Alert } from "react-native";
+import React, { useState, useCallback } from "react";
+import { Text, TextInput, TouchableOpacity, View, ScrollView, KeyboardAvoidingView, Platform, BackHandler } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
 import { useSession } from "@clerk/clerk-react";
@@ -94,7 +94,7 @@ export default function BusinessInfo() {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView>
         <View className="bg-bg h-screen">
           <View className="flex h-screen">
             <ScrollView className="flex mx-8 mt-20">
