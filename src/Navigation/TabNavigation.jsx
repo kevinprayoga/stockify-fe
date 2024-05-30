@@ -6,6 +6,7 @@ import Cart from "../Tab/Cart";
 import History from "../Tab/History";
 import StockNavigation from "./StockNavigation";
 import ProfileNavigation from "./ProfileNavigation";
+import HistoryNavigation from "./HistoryNavigation";
 
 import { View, Text } from 'react-native';
 import { Entypo, Feather, MaterialCommunityIcons, FontAwesome5, Ionicons } from '@expo/vector-icons';
@@ -70,7 +71,7 @@ export default function TabNavigation() {
       />
       <Tab.Screen
         name="History"
-        component={History}
+        component={HistoryNavigation}
         options={{
           tabBarIcon: ({ focused, size }) => (
             <View style={focused ? styles.focusedTab : styles.defaultTab}>

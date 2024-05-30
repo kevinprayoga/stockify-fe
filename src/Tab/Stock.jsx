@@ -8,7 +8,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useSession } from "@clerk/clerk-expo";
 import { API_URL, PORT } from '@env';
 
-export default function Stock() {
+export default function Stock({navigation}) {
   const [productResult, setProductResult] = useState([]);
   const [totalProduct, setTotalProduct] = useState(0);
   const [emptyStockProd, setEmptyStockProd] = useState(0);
@@ -39,6 +39,75 @@ export default function Stock() {
     fetchToken();
   }, [session]);
 
+
+//   productResult = [
+//     {
+//         "productId": "tzCVZAupSG4_RdV18MDG",
+//         "businessId": "8E-MJkejVenVWJj4",
+//         "productName": "Sari Roti",
+//         "cost": 5000,
+//         "price": 10000,
+//         "stock": 50,
+//         "image": "https://storage.googleapis.com/stockify-ef5e0.appspot.com/productImage/1717054408435.jpg",
+//         "createdAt": "2024-05-30T07:33:28.715Z",
+//         "updatedAt": "2024-05-30T07:33:28.715Z"
+//     },
+//     {
+//         "productId": "ot64K5vP6KSC9Sehz1mx",
+//         "businessId": "8E-MJkejVenVWJj4",
+//         "productName": "Ultra Milk",
+//         "cost": 3000,
+//         "price": 5000,
+//         "stock": 100,
+//         "image": "https://storage.googleapis.com/stockify-ef5e0.appspot.com/productImage/1717054375119.jpg",
+//         "createdAt": "2024-05-30T07:32:55.403Z",
+//         "updatedAt": "2024-05-30T07:32:55.403Z"
+//     },
+//     {
+//         "productId": "PlBJ_VVZ7LqkIHPUDFqZ",
+//         "businessId": "8E-MJkejVenVWJj4",
+//         "productName": "Rinso",
+//         "cost": 50000,
+//         "price": 55000,
+//         "stock": 20,
+//         "image": "https://storage.googleapis.com/stockify-ef5e0.appspot.com/productImage/1717054234551.jpg",
+//         "createdAt": "2024-05-30T07:30:34.843Z",
+//         "updatedAt": "2024-05-30T07:30:34.843Z"
+//     },
+//     {
+//         "productId": "m2tkSjg6ekbE-MAQuTBV",
+//         "businessId": "8E-MJkejVenVWJj4",
+//         "productName": "Khong Guan",
+//         "cost": 60000,
+//         "price": 75000,
+//         "stock": 10,
+//         "image": "https://storage.googleapis.com/stockify-ef5e0.appspot.com/productImage/1717054124048.jpg",
+//         "createdAt": "2024-05-30T07:28:44.415Z",
+//         "updatedAt": "2024-05-30T07:28:44.415Z"
+//     },
+//     {
+//         "productId": "QYZ8jJg2nH_MLSrjmXym",
+//         "businessId": "8E-MJkejVenVWJj4",
+//         "productName": "Taro",
+//         "cost": 1000,
+//         "price": 4000,
+//         "stock": 100,
+//         "image": "https://storage.googleapis.com/stockify-ef5e0.appspot.com/productImage/1717054010110.jpg",
+//         "createdAt": "2024-05-30T07:26:50.357Z",
+//         "updatedAt": "2024-05-30T07:26:50.357Z"
+//     },
+//     {
+//         "productId": "Ml_dQ2oOSL2IOlNiNkQB",
+//         "businessId": "8E-MJkejVenVWJj4",
+//         "productName": "Sprite",
+//         "cost": 3000,
+//         "price": 5000,
+//         "stock": 50,
+//         "image": "https://storage.googleapis.com/stockify-ef5e0.appspot.com/productImage/1717053910859.jpg",
+//         "createdAt": "2024-05-30T07:25:11.340Z",
+//         "updatedAt": "2024-05-30T07:25:11.340Z"
+//     }
+// ];
   const fetchData = async () => {
     try {
       const token = await session.getToken();
@@ -82,8 +151,10 @@ export default function Stock() {
     nav.push("AddProduct")
   };
 
-  const editProductPageHandler = () => {
-    nav.push("EditProduct", {prod: product})
+  const editProductPageHandler = (product) => {
+    navigation.navigate('EditProduct', {
+      product: product
+    });
   };
 
   return (
@@ -131,7 +202,7 @@ export default function Stock() {
                     <View className="flex-row items-center justify-between mt-[10]">
                       <Text className="text-[18px] font-s">Rp{product.price.toLocaleString('id-ID')}</Text>
                       <View className="justify-center">
-                        <TouchableOpacity onPress={editProductPageHandler} className="w-[35px] h-[35px] bg-[#5A4DF3] rounded-lg mx-auto items-center justify-center">
+                        <TouchableOpacity onPress={() => editProductPageHandler(product)} className="w-[35px] h-[35px] bg-[#5A4DF3] rounded-lg mx-auto items-center justify-center">
                           <Image source={images.stocklogo} className="h-6 w-6"/> 
                         </TouchableOpacity>
                       </View>

@@ -2,63 +2,83 @@ import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useFonts } from 'expo-font';
+import { useNavigation, useNavigationParam, useRoute } from "@react-navigation/native";
 
-export default function HistoryDetail() {
-
+export default function HistoryDetail({route, navigation}) {
+    const { transaction } = route.params;
     const [fontsLoaded] = useFonts({
         "Poppins-Bold": require('../../assets/fonts/Poppins-Bold.ttf'),
-        "Poppins-Regular": require('../../assets/fonts/Poppins-Regular.ttf')
+        "Poppins-SemiBold": require('../../assets/fonts/Poppins-SemiBold.ttf'),
+        "Poppins-Medium": require('../../assets/fonts/Poppins-Medium.ttf'),
+        "Poppins-Regular": require('../../assets/fonts/Poppins-Regular.ttf'),
+        "Poppins-Light": require('../../assets/fonts/Poppins-Light.ttf'),
     });
+
+    const nav = useNavigation();
+
+    const historyPageHandler = () => {
+        nav.navigate("History");
+    }
+
+    const formatDate = (isoString) => {
+        const date = new Date(isoString);
+      
+        // Extract the date components
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-based
+        const year = date.getFullYear();
+      
+        // Format the date as DD/MM/YYYY
+        return `${day}/${month}/${year}`;
+    };
+
 
     return (
         <View className="bg-[#F5F6F7]">
         <ScrollView className="mt-[30] h-screen bg-[#F5F6F7]">
             {/* Page Title */}
             <View className="items-center mt-[30]">
-                <Text className="text-xl font-h">Detail Transaksi</Text>
+                <Text className="text-xl font-b">Detail Transaksi</Text>
             </View>
 
             {/* Back Button */}
             <View className="absolute mt-[25]">
-                <TouchableOpacity className="ml-[27] w-[30px] h-[30px] bg-[#5A4DF3] rounded-full items-center justify-center">
+                <TouchableOpacity onPress={historyPageHandler} className="ml-[27] w-[30px] h-[30px] bg-[#5A4DF3] rounded-full items-center justify-center">
                     <AntDesign name="arrowleft" size={15} color="white"/>
                 </TouchableOpacity>    
             </View>
 
             {/* Card */}
-            <View className="mx-[27] mt-[20] bg-white rounded-xl shadow">
+            <ScrollView className="mx-[27] mt-[20] bg-white rounded-xl shadow">
                 {/* ID Produk & Status */}
                 <View className="border-b border-gray-200 flex-row justify-between items-center p-[15]">
                     <View>
-                        <Text className="text-xl font-h">#0376</Text>
-                        <Text className="text-[13px] text-gray-400 font-p">20/03/2024</Text>
+                        <Text className="text-[17px] font-s">ID: {transaction.transactionId}</Text>
+                        <Text className="text-[13px] text-gray-400 font-p">{formatDate(transaction.createdAt)}</Text>
                     </View>
                     <View className="flex-row items-center">
-                        <Text className="text-[#27AE60] font-h pt-[3]">Selesai  </Text>
+                        <Text className="text-[#27AE60] font-s pt-[3]">Selesai  </Text>
                         <AntDesign name="checkcircle" size={13} color="#27AE60"/>
                     </View>
                 </View>
                 {/* Daftar Item */}
                 <View className="px-[15] py-[5]">
-                    <View className="flex-row justify-between items-center">
-                        <View className="flex-row p-[10]">
-                            <Text className="w-[30] font-p">1</Text><Text className="font-p">Mie Goreng</Text>
+                    {transaction.transactionItems.map((item) => (
+                        <View className="flex-row justify-between items-center">
+                            <View className="flex-row p-[10]">
+                                <Text className="w-[30] font-s">{item.count}</Text><Text className="font-s">{item.nameItem}</Text>
+                            </View>
+                            <Text className="font-s">Rp{item.priceItem.toLocaleString('id-ID')}</Text>
                         </View>
-                        <Text className="font-p">Rp125.000</Text>
-                    </View>
-                    <View className="flex-row justify-between items-center">
-                        <View className="flex-row p-[10]">
-                            <Text className="w-[30] font-p">10</Text><Text className="font-p">Koko Krunch</Text>
-                        </View>
-                        <Text className="font-p">Rp200.000</Text>
-                    </View>
+                    ))}
+                    
                 </View>
                 {/* Total */}
                 <View className="bg-[#5A4DF3] rounded-b-lg px-[15] py-[10] flex-row justify-between">
-                    <Text className="text-lg text-white font-h">Total</Text>
-                    <Text className="text-lg text-white font-h">Rp325.000</Text>
+                    <Text className="text-lg text-white font-b">Total</Text>
+                    <Text className="text-lg text-white font-b">Rp{transaction.totalPayment.toLocaleString('id-ID')}</Text>
                 </View>
-            </View>
+            </ScrollView>
 
         </ScrollView>
         </View>
