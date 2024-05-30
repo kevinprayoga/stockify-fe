@@ -45,7 +45,7 @@ export default function TabNavigation() {
         }}
       />
       <Tab.Screen
-        name="Stock"
+        name="StockNavigation"
         component={StockNavigation}
         options={{
           tabBarIcon: ({ focused, size }) => (
@@ -81,7 +81,7 @@ export default function TabNavigation() {
         }}
       />
       <Tab.Screen
-        name="Profile"
+        name="ProfileNavigation"
         component={ProfileNavigation}
         options={{
           tabBarIcon: ({ focused, size }) => (
