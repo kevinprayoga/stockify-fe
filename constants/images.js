@@ -29,7 +29,7 @@ export default {
   aboutappillustration,
   splash,
   faq,
-  logout2
+  logout2,
   google,
   placeholder,
   save, 
