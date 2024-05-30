@@ -5,7 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { config, closeConfig } from "./hooks/animation";
-import MyAccount from "./src/Tab/MyAccount";
+import PopupDelete from "./src/Tab/PopupDelete";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -26,8 +26,8 @@ export default function App() {
         animation="fade"
       >
         <Stack.Screen
-          name="MyAccount"
-          component={MyAccount} 
+          name="PopupDelete"
+          component={PopupDelete} 
           options={{
             headerShown: false,
           }}
