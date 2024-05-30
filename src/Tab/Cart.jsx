@@ -8,8 +8,9 @@ import { useSession } from "@clerk/clerk-expo";
 import { useNavigation } from "@react-navigation/native";
 import { API_URL, PORT } from '@env';
 
-export default function Cart() {
+export default function Cart({navigation}) {
   const [productResult, setProductResult] = useState([]);
+  const [cartResult, setCartResult] = useState([]);
   const [totalProduct, setTotalProduct] = useState(0);
   const [emptyStockProd, setEmptyStockProd] = useState(0);
 
@@ -72,18 +73,54 @@ export default function Cart() {
       setTotalProduct(totalProductResp);
       const emptyStockProduct = productResult.data.filter(item => item.stock === 0).length;
       setEmptyStockProd(emptyStockProduct);
+
+       /** Melakukan GET All Product */
+      const cartResponse = await fetch(`${API_URL}:${port}/business/${businessId}/transactionItem`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      if (!cartResponse.ok) {
+        throw new Error("Failed to fetch products");
+      }
+      const cartResult = await cartResponse.json();
+      setCartResult(cartResult.data);
+      console.log(cartResult);
     } catch (error) {
       console.error("Error fetching data: ", error);
     }
   };
 
-  // <TouchableOpacity className="w-[35px] h-[35px] bg-[#5A4DF3] rounded-lg mx-auto items-center justify-center">
-  //                       <AntDesign name="plus" size={23} color="white" className=""/>
-  //                     </TouchableOpacity>
+  const countTotalItem = (cart) => {
+    let totalItems = 0;
+    cart.forEach((item) => {
+      totalItems += item.count;
+    });
+    return totalItems;
+  }
+
+  const countTotalPrice = (cart) => {
+    let totalPrice = 0;
+    cart.forEach((item) => {
+      totalPrice += item.priceItem * item.count;
+    });
+    return totalPrice;
+  }
+
+  const orderPageHandler = (cart) => {
+    navigation.navigate('Order', {
+      cart: cart
+    })
+  }
+
+  const addItemToCart = async (product) => {
+    console.log("added product");
+  }
+
 
   return (
     <View className="relative bg-[#F5F6F7]">
-      <ScrollView className="mt-[50] bg-[#F5F6F7]">
+      <ScrollView className={`mt-[50] bg-[#F5F6F7]  ${countTotalItem(cartResult) > 0 ? '' : 'h-screen'}`}>
         <View className="justify-center items-center mx-[27] h-[50]">
           <Text className="text-2xl font-s">Keranjang</Text>
           <Text className="text-xl font-s">Check Out</Text>
@@ -93,7 +130,7 @@ export default function Cart() {
           <Octicons name="search" size={20} color="#9CA3AF"/>
           <TextInput placeholder="Cari Produk" placeholderTextColor="#9CA3AF" className="ml-[10] font-l bg-white text-base rounded-lg h-[45] flex-1"></TextInput>
         </View> 
-        <View className="items-center mx-[20] mb-[70px]">
+        <View className={`items-center mx-[20] ${countTotalItem(cartResult) > 0 ? 'mb-[70px]' : 'mb-[130px]'}`}>
           {/* Row 1 */}
           <View className="w-full flex-row flex-wrap justify-between ">
             {/* Col 1 */}
@@ -112,7 +149,7 @@ export default function Cart() {
                     <View className="flex-row items-center justify-between mt-[10]">
                       <Text className="text-[18px] font-s">Rp{product.price.toLocaleString('id-ID')}</Text>
                       <View className="justify-center">
-                      <TouchableOpacity className="w-[35px] h-[35px] bg-[#5A4DF3] rounded-lg mx-auto items-center justify-center">
+                      <TouchableOpacity onPress={() => (addItemToCart(product))} className="w-[35px] h-[35px] bg-[#5A4DF3] rounded-lg mx-auto items-center justify-center">
                         <AntDesign name="plus" size={23} color="white" className=""/>
                       </TouchableOpacity>
                       </View>
@@ -125,11 +162,30 @@ export default function Cart() {
           </View>
         </View> 
       </ScrollView>
-      <View pointerEvents="none" className="absolute w-screen bottom-0 bg-gray-200 h-[60] rounded-t-xl">
-        <Text className="text-xl">
-          aaa
-        </Text>
-      </View>
+      {countTotalItem(cartResult) > 0 ?
+        <View className="absolute w-screen bottom-0 bg-gray-200 h-[60] rounded-t-xl flex-row justify-between items-center px-[30]">
+          <View className="flex-row items-center">
+            <View className="pr-2">
+              <AntDesign name="shoppingcart" size={24} color="black" />
+            </View>
+            <View className="pl-2">
+              <Text className="text-[15px] font-r">
+                {countTotalItem(cartResult)} Item
+              </Text>
+              <Text className="font-b text-xl">
+                Rp{countTotalPrice(cartResult).toLocaleString('id-ID')}
+              </Text>
+            </View>
+          </View>
+          <View>
+            <TouchableOpacity onPress={() => (orderPageHandler(cartResult))} className="rounded-xl bg-[#5A4DF3] w-[100] h-[30] items-center justify-center">
+              <Text className="text-white font-s">Check Out</Text>
+            </TouchableOpacity>
+
+          </View>
+        </View>
+        :  <View className=""></View>
+      }
     </View>
   );
 }
