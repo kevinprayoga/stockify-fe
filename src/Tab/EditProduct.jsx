@@ -8,7 +8,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Formik } from 'formik';
 import { images } from "../../constants";
 
-export default function EditProduct() {
+export default function EditProduct(product) {
     const [image, setImage] = useState(null);
 
     const pickImage = async () => {
