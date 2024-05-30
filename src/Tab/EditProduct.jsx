@@ -1,14 +1,14 @@
-import React from "react";
-import { ScrollView, Text, TouchableOpacity, View, Button, Image, StyleSheet, TextInput, ToastAndroid, Modal } from "react-native";
-import { useState } from 'react';
+import React, {useState, useEffect}  from "react";
+import { ScrollView, Text, TouchableOpacity, View, Button, Image, StyleSheet, TextInput, ToastAndroid, Modal, KeyboardAvoidingView, Platform } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useFonts } from 'expo-font';
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useNavigationParam, useRoute } from "@react-navigation/native";
 import { Formik } from 'formik';
 import { images } from "../../constants";
 
-export default function EditProduct(product) {
+export default function EditProduct({ route, navigation }) {
+    const { product } = route.params;
     const [image, setImage] = useState(null);
 
     const pickImage = async () => {
@@ -53,17 +53,19 @@ export default function EditProduct(product) {
         }
     };
 
-    const onSubmitMethod=(value)=>{
-        value.image = image;
-        if (!value.productName || !value.cost || !value.price || !value.stock || !value.image) {
-            console.log('Data belum lengkap');
-            ToastAndroid.show("Data belum lengkap!", ToastAndroid.SHORT)
-        } else {
-            console.log(value);
-        }
-    };
+    const saveChangeHandler = () => {
+
+    }
+
+    const deleteProductHandler = () => {
+
+    }
+
+    
     return (
-        <View>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
             <ScrollView className="mt-[30] h-screen bg-[#F5F6F7]">
                 <View className="items-center mt-[30]">
                     <Text className="text-xl font-h"></Text>
@@ -74,10 +76,10 @@ export default function EditProduct(product) {
                         <AntDesign name="arrowleft" size={15} color="white"/>
                     </TouchableOpacity>    
                 </View>
-                <View className="mx-[27] mt-[30]">
+                <ScrollView className="mx-[27] mt-[30]">
                     {/* Form */}
                     <Formik
-                        initialValues={{productName:'',cost:0,price:0,stock:0,image:''}}
+                        initialValues={{productName:product.productName,cost:product.cost,price:product.price,stock:product.stock,image:product.image}}
                         onSubmit={value =>onSubmitMethod(value)}
                     >
                         {({handleChange,handleBlur,handleSubmit,values,setFieldValue,error})=> (
@@ -87,9 +89,7 @@ export default function EditProduct(product) {
                                     <View className="relative w-[240] h-[180] justify-end">
                                         { image? 
                                             <Image source={{uri:image}} className="w-full h-full border border-[#5A4DF3] rounded-xl"/>
-                                            : <View className="w-full h-full border border-[#5A4DF3] rounded-xl items-center justify-center">
-                                                <Text className="font-b">Edit</Text>
-                                            </View>
+                                            : <Image source={{uri:product.image}} className="w-full h-full border border-[#5A4DF3] rounded-xl"/>
                                         }
                                         <View className="absolute w-full items-end p-[10]">
                                             <TouchableOpacity
@@ -105,7 +105,7 @@ export default function EditProduct(product) {
                                 <View className="mt-[10]">
                                     <Text className="text-[#5A4DF3] pl-2 font-s">Nama Produk</Text>
                                     <TextInput 
-                                        placeholder="Nama Produk"
+                                        placeholder={product.productName}
                                         onChangeText={handleChange('productName')}
                                         onBlur={handleBlur('productName')}
                                         value={values.productName}
@@ -117,10 +117,11 @@ export default function EditProduct(product) {
                                     <View className="w-1/2 pr-1">
                                         <Text className="text-[#5A4DF3] pl-2 font-s">Harga Pokok</Text>
                                         <TextInput 
-                                            placeholder="Harga Pokok"
+                                            placeholder={String(product.cost)}
                                             keyboardType="numeric"
                                             onChangeText={handleChange('cost')}
                                             onBlur={handleBlur('cost')}
+                                            defaultValue={String(product.cost)}
                                             value={values.cost}
                                             className="bg-white rounded-lg h-[45] px-4 shadow font-l border border-[#5A4DF3]"
                                         />
@@ -128,10 +129,11 @@ export default function EditProduct(product) {
                                     <View className="w-1/2 pl-1">
                                         <Text className="text-[#5A4DF3] pl-2 font-s">Harga Jual</Text>
                                         <TextInput 
-                                            placeholder="Harga Jual"
+                                            placeholder={String(product.price)}
                                             keyboardType="numeric"
                                             onChangeText={handleChange('price')}
                                             onBlur={handleBlur('price')}
+                                            defaultValue={String(product.price)}
                                             value={values.price}
                                             className="bg-white rounded-lg h-[45] px-4 shadow font-l border border-[#5A4DF3]"
                                         />
@@ -151,9 +153,9 @@ export default function EditProduct(product) {
                                             </TouchableOpacity>
                                             <TextInput 
                                                 keyboardType="numeric"
-                                                onChangeText={handleChange('stock')}
+                                                onChangeText={parseInt(handleChange('stock'))}
                                                 onBlur={handleBlur('stock')}
-                                                defaultValue="1"
+                                                defaultValue={String(product.stock)}
                                                 value={values.stock}
                                                 className="bg-white h-[45] w-[40] shadow font-l border-b border-gray-300 text-center text-lg"
                                             />
@@ -177,7 +179,7 @@ export default function EditProduct(product) {
                                     </View>
                                     <View className="w-1/2 pl-1">
                                         <TouchableOpacity 
-                                            onPress={handleSubmit}
+                                            onPress={saveChangeHandler}
                                             className="bg-[#5A4DF3] h-[45] rounded-xl items-center justify-center"
                                         >
                                             <Text className="text-lg font-s text-white">Simpan</Text>
@@ -186,7 +188,7 @@ export default function EditProduct(product) {
                                 </View>
                                 <View className="mt-[10]">
                                     <TouchableOpacity 
-                                        onPress={stockPageHandler}
+                                        onPress={deleteProductHandler}
                                         className="bg-[#F13131] h-[45] rounded-xl items-center justify-center"
                                     >
                                         <Text className="text-lg font-s text-white">Hapus Produk</Text>
@@ -195,7 +197,7 @@ export default function EditProduct(product) {
                             </View>
                         )}
                     </Formik>
-                </View>
+                </ScrollView>
             </ScrollView>
             <Modal visible={false}>
                 <View className="h-screen bg-gray-400 items-center justify-center">
@@ -241,6 +243,6 @@ export default function EditProduct(product) {
                     </View>
                 </View>
             </Modal>
-        </View>
+        </KeyboardAvoidingView>
     );
 }
