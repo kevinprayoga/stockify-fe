@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, ScrollView, Text, TextInput, TouchableOpacity, View, Modal } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { Octicons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
@@ -82,8 +82,8 @@ export default function Cart() {
   //                     </TouchableOpacity>
 
   return (
-    <View className="bg-[#F5F6F7]">
-      <ScrollView className="mt-[50] h-screen bg-[#F5F6F7]">
+    <View className="relative bg-[#F5F6F7]">
+      <ScrollView className="mt-[50] bg-[#F5F6F7]">
         <View className="justify-center items-center mx-[27] h-[50]">
           <Text className="text-2xl font-s">Keranjang</Text>
           <Text className="text-xl font-s">Check Out</Text>
@@ -93,7 +93,7 @@ export default function Cart() {
           <Octicons name="search" size={20} color="#9CA3AF"/>
           <TextInput placeholder="Cari Produk" placeholderTextColor="#9CA3AF" className="ml-[10] font-l bg-white text-base rounded-lg h-[45] flex-1"></TextInput>
         </View> 
-        <View className="items-center mx-[20] mb-[130px]">
+        <View className="items-center mx-[20] mb-[70px]">
           {/* Row 1 */}
           <View className="w-full flex-row flex-wrap justify-between ">
             {/* Col 1 */}
@@ -125,6 +125,11 @@ export default function Cart() {
           </View>
         </View> 
       </ScrollView>
+      <View pointerEvents="none" className="absolute w-screen bottom-0 bg-gray-200 h-[60] rounded-t-xl">
+        <Text className="text-xl">
+          aaa
+        </Text>
+      </View>
     </View>
   );
 }
