@@ -29,12 +29,14 @@ export default function Home() {
       const token = await session.getToken();
 
       /** Melakukan GET BusinessInfo */
+      console.log(API_URL, PORT);
+      console.log(token);
       const businessResponse = await fetch(`${API_URL}:${PORT}/business`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
       });
-      console.log('Token:');
+      
       if (!businessResponse.ok) {
         throw new Error("Failed to fetch business info");
       }
