@@ -121,6 +121,7 @@ export default function EditProduct({ route, navigation }) {
                                             keyboardType="numeric"
                                             onChangeText={handleChange('cost')}
                                             onBlur={handleBlur('cost')}
+                                            defaultValue={String(product.cost)}
                                             value={values.cost}
                                             className="bg-white rounded-lg h-[45] px-4 shadow font-l border border-[#5A4DF3]"
                                         />
@@ -132,6 +133,7 @@ export default function EditProduct({ route, navigation }) {
                                             keyboardType="numeric"
                                             onChangeText={handleChange('price')}
                                             onBlur={handleBlur('price')}
+                                            defaultValue={String(product.price)}
                                             value={values.price}
                                             className="bg-white rounded-lg h-[45] px-4 shadow font-l border border-[#5A4DF3]"
                                         />
