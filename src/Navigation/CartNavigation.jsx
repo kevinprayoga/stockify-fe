@@ -8,15 +8,17 @@ import Profile from "../Tab/Profile";
 import AddProduct from "../Tab/AddProduct";
 import EditProduct from "../Tab/EditProduct";
 import HistoryDetail from '../Tab/HistoryDetail';
+import Order from "../Tab/Order";
 
 import { View, Text } from 'react-native';
 import { Entypo, Feather, MaterialCommunityIcons, FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { config, closeConfig } from "../../hooks/animation";
 
+
 const Stack = createNativeStackNavigator();
 
-export default function HistoryNavigation() {
+export default function CartNavigation() {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -31,13 +33,13 @@ export default function HistoryNavigation() {
       animation="fade"
     >
       <Stack.Screen
-        name="History"
-        component={History}
+        name="Cart"
+        component={Cart}
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="HistoryDetail"
-        component={HistoryDetail}
+        name="Order"
+        component={Order}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
