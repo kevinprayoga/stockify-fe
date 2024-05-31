@@ -30,6 +30,7 @@ export default function Home() {
   const fetchData = async () => {
     try {
       const token = await session.getToken();
+      console.log(`${API_URL}:${PORT}/business`);
 
       /** Melakukan GET BusinessInfo */
       const businessResponse = await fetch(`${API_URL}:${PORT}/business`, {

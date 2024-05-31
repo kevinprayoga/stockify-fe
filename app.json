@@ -23,7 +23,8 @@
       },
       "permissions": [
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "package": "com.kevinprayoga.stockify"
     },
     "web": {
       "favicon": "./assets/favicon.png"
