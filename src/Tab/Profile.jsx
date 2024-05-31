@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Image, TouchableOpacity, Text, View, Modal } from "react-native";
+import { Image, TouchableOpacity, Text, View, Modal, ScrollView } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 import { images } from "../../constants";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useAuth, useUser } from "@clerk/clerk-expo";
 import { API_URL, PORT } from '@env';
 import { useSession } from "@clerk/clerk-react";
@@ -15,9 +15,11 @@ export default function Profile() {
   const [businessName, setBusinessName] = useState('');
   const { session } = useSession();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+    }, [])
+  );
 
   const fetchData = async () => {
     try {
@@ -70,7 +72,7 @@ export default function Profile() {
   };
 
   return (
-    <View className="bg-bg h-screen">
+    <ScrollView className="bg-bg h-screen" contentContainerStyle={{ paddingBottom: 40 }}>
       <View>
         <Text className="font-medium text-center text-3xl mt-8 pt-16">Akun</Text>
       </View>
@@ -132,7 +134,7 @@ export default function Profile() {
           </View>
         </View>
         <View className="flex mx-3">
-          <Text className="font-semibold text-lg text-black">Help & Support</Text>
+          <Text className="font-semibold text-lg text-black">Bantuan</Text>
         </View>
         <View className="absolute right-0">
           <MaterialIcons name="keyboard-arrow-right" size={36} color="black" />
@@ -147,7 +149,7 @@ export default function Profile() {
           </View>
         </View>
         <View className="flex mx-3">
-          <Text className="font-semibold text-lg text-black">About App</Text>
+          <Text className="font-semibold text-lg text-black">Tentang Aplikasi</Text>
         </View>
         <View className="absolute right-0">
           <MaterialIcons name="keyboard-arrow-right" size={36} color="black" />
@@ -178,6 +180,6 @@ export default function Profile() {
           <View className="bg-black h-screen w-screen z-0 opacity-50" />
         </View>
       </Modal>
-    </View>
+    </ScrollView>
   );
 }

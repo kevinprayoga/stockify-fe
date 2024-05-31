@@ -6,6 +6,7 @@ import { API_URL, PORT } from '@env';
 import { useSession } from "@clerk/clerk-react";
 import { Menu, Provider } from 'react-native-paper';
 import { useUser } from "@clerk/clerk-expo";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function Home() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -20,9 +21,11 @@ export default function Home() {
 
   const [isDropdownVisible, setDropdownVisible] = useState(false);
 
-  useEffect(() => {
-    fetchData();
-  }, [selectedYear]);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+    }, [selectedYear])
+  );
 
   const fetchData = async () => {
     try {
@@ -34,7 +37,6 @@ export default function Home() {
           'Authorization': `Bearer ${token}`,
         },
       });
-      console.log('Token:');
       if (!businessResponse.ok) {
         throw new Error("Failed to fetch business info");
       }
@@ -110,7 +112,7 @@ export default function Home() {
             </View>
             <View className="flex justify-between mx-2 space-y-5">
               <View className="flex-row justify-between">
-                <View className="bg-indigo-300 p-4 rounded-2xl">
+                <View className="bg-indigo-300 p-3 rounded-2xl">
                   <View className="flex-row items-center mb-2">
                     <View className="mr-12">
                       <Text className="font-s font-medium text-sm">Product</Text>
@@ -119,7 +121,7 @@ export default function Home() {
                   </View>
                   <Text className="font-s font-semibold text-4xl">{totalProduct}</Text>
                 </View>
-                <View className="bg-red-300 p-4 rounded-2xl">
+                <View className="bg-red-300 p-3 rounded-2xl">
                   <View className="flex-row items-center justify-between mb-2">
                     <View className="mr-5">
                       <Text className="font-s font-medium text-sm text-[#F51818]">Out of Stock</Text>

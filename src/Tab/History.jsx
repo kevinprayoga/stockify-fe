@@ -5,32 +5,17 @@ import { API_URL, PORT } from '@env';
 import { useSession } from "@clerk/clerk-react";
 import { Menu, Provider } from 'react-native-paper';
 import { useUser } from "@clerk/clerk-expo";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function History({navigation}) {
   const [transactionResult, setTrasactionResult] = useState([]);
-  const [isSelesaiActive, setIsSelesaiActive] = useState(true);
   const { session } = useSession();
-  const [token, setToken] = useState(null);
 
-  const [fontsLoaded] = useFonts({
-    "Poppins-Bold": require('../../assets/fonts/Poppins-Bold.ttf'),
-    "Poppins-SemiBold": require('../../assets/fonts/Poppins-SemiBold.ttf'),
-    "Poppins-Medium": require('../../assets/fonts/Poppins-Medium.ttf'),
-    "Poppins-Regular": require('../../assets/fonts/Poppins-Regular.ttf'),
-    "Poppins-Light": require('../../assets/fonts/Poppins-Light.ttf'),
-  });
-
-  useEffect(() => {
-    fetchData();
-    const fetchToken = async () => {
-      if (session) {
-        const token = await session.getToken();
-        console.log('Clerk JWT:', token);
-        setToken(token);
-      }
-    };
-    fetchToken();
-  }, [session]);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+    }, [])
+  );
 
 //   transactionResult = [
 //     {
@@ -112,7 +97,6 @@ export default function History({navigation}) {
 
       console.log(API_URL, PORT);
       console.log(token);
-      const port = 8080;
       /** Melakukan GET BusinessInfo */
       const businessResponse = await fetch(`${API_URL}:${PORT}/business`, {
         headers: {
@@ -181,7 +165,7 @@ export default function History({navigation}) {
         
         <View className="mt-[30] mb-[130px]">
           {transactionResult.map((transaction) =>(
-            <View className="mb-[10] mx-[27] bg-white rounded-lg p-[15] shadow">
+            <View key={transaction.transactionId} className="mb-[10] mx-[27] bg-white rounded-lg p-[15] shadow">
               {/* ID & Date*/}
               <View className="flex-row justify-between items-center border-b border-gray-200 pb-[8]">
                 <Text className="text-[16px] font-b">ID: {transaction.transactionId}</Text>
