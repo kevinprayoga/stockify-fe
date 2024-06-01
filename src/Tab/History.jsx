@@ -1,53 +1,63 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { Text, View, ScrollView, TouchableOpacity } from "react-native";
 import { API_URL, PORT } from '@env';
 import { useSession } from "@clerk/clerk-react";
 import { useUser } from "@clerk/clerk-expo";
 import { useFocusEffect } from "@react-navigation/native";
+import debounce from 'lodash.debounce';
 
-export default function History({navigation}) {
-  const [transactionResult, setTrasactionResult] = useState([]);
+export default function History({ navigation }) {
+  const [transactionResult, setTransactionResult] = useState([]);
   const { session } = useSession();
   const { user } = useUser();
+  const dataCache = useRef(null);
+
+  const fetchData = useCallback(
+    debounce(async () => {
+      try {
+        if (dataCache.current) {
+          setTransactionResult(dataCache.current);
+          return;
+        }
+
+        const token = await session.getToken();
+
+        /** Melakukan GET BusinessInfo */
+        const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        if (!businessResponse.ok) {
+          throw new Error("Failed to fetch business info");
+        }
+        const businessResult = await businessResponse.json();
+        const businessId = businessResult.data[0].businessId;
+
+        /** Melakukan GET All Transaction */
+        const transactionResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/transaction`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        if (!transactionResponse.ok) {
+          throw new Error("Failed to fetch transactions");
+        }
+        const transactionResult = await transactionResponse.json();
+        setTransactionResult(transactionResult.data);
+        dataCache.current = transactionResult.data;
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
+    }, 300), // Debounce interval of 300 milliseconds
+    [session, user.id] // Dependencies
+  );
 
   useFocusEffect(
     React.useCallback(() => {
       fetchData();
-    }, [])
+    }, [fetchData])
   );
-
-  const fetchData = async () => {
-    try {
-      const token = await session.getToken();
-
-      /** Melakukan GET BusinessInfo */
-      const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      if (!businessResponse.ok) {
-        throw new Error("Failed to fetch business info");
-      }
-      const businessResult = await businessResponse.json();
-      const businessId = businessResult.data[0].businessId;
-
-      /** Melakukan GET All Transaction */
-      const transactionResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/transaction`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      if (!transactionResponse.ok) {
-        throw new Error("Failed to fetch transactions");
-      }
-      const transactionResult = await transactionResponse.json();
-      setTrasactionResult(transactionResult.data);
-      
-    } catch (error) {
-      console.error("Error fetching data: ", error);
-    }
-  };
 
   const countTotalItem = (transaction) => {
     let totalItem = 0;
@@ -59,12 +69,12 @@ export default function History({navigation}) {
 
   const formatDate = (isoString) => {
     const date = new Date(isoString);
-  
+
     // Extract the date components
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-based
     const year = date.getFullYear();
-  
+
     // Format the date as DD/MM/YYYY
     return `${day}/${month}/${year}`;
   };
@@ -84,9 +94,9 @@ export default function History({navigation}) {
         </View> 
         
         <View className="mt-[30] mb-[130px]">
-          {transactionResult.map((transaction) =>(
+          {transactionResult.map((transaction) => (
             <View key={transaction.transactionId} className="mb-[10] mx-[27] bg-white rounded-lg p-[15] shadow">
-              {/* ID & Date*/}
+              {/* ID & Date */}
               <View className="flex-row justify-between items-center border-b border-gray-200 pb-[8]">
                 <Text className="text-[16px] font-b">ID: {transaction.transactionId}</Text>
                 <Text className="text-[13px] text-gray-400 font-r">{formatDate(transaction.createdAt)}</Text>
@@ -108,9 +118,8 @@ export default function History({navigation}) {
                   </View>
                 </View>
               </View>
-            </View> 
+            </View>
           ))}
-          
         </View>
       </ScrollView>
     </View>

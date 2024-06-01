@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { Octicons } from '@expo/vector-icons';
@@ -6,6 +6,7 @@ import { useSession } from "@clerk/clerk-react";
 import { useUser } from "@clerk/clerk-expo";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { API_URL, PORT } from '@env';
+import debounce from 'lodash.debounce';
 
 export default function Cart() {
   const [productResult, setProductResult] = useState([]);
@@ -13,63 +14,80 @@ export default function Cart() {
   const [searchQuery, setSearchQuery] = useState("");
   const [totalItems, setTotalItems] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
-
   const nav = useNavigation();
-
   const { session } = useSession();
   const { user } = useUser();
+  const dataCache = useRef({});
 
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchData(searchQuery);
-      setTotalItems(countTotalItem(cartResult));
-      setTotalPrice(countTotalPrice(cartResult));
-    }, [searchQuery, cartResult])
+  const fetchData = useCallback(
+    debounce(async (query = '') => {
+      try {
+        const cacheKey = `${user.id}-${query}`;
+        if (dataCache.current[cacheKey]) {
+          const cachedData = dataCache.current[cacheKey];
+          setProductResult(cachedData.productResult);
+          setCartResult(cachedData.cartResult);
+          setTotalItems(countTotalItem(cachedData.cartResult));
+          setTotalPrice(countTotalPrice(cachedData.cartResult));
+          return;
+        }
+
+        const token = await session.getToken();
+
+        /** Melakukan GET BusinessInfo */
+        const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        if (!businessResponse.ok) {
+          throw new Error("Failed to fetch business info");
+        }
+        const businessResult = await businessResponse.json();
+        const businessId = businessResult.data[0].businessId;
+
+        /** Melakukan GET All Product */
+        const productResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/product?queryName=${query}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        if (!productResponse.ok) {
+          throw new Error("Failed to fetch products");
+        }
+        const productResult = await productResponse.json();
+        setProductResult(productResult.data);
+
+        /** Melakukan GET Transaction Item Unorder */
+        const cartResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/transactionItem`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        if (!cartResponse.ok) {
+          throw new Error("Failed to fetch products");
+        }
+        const cartResult = await cartResponse.json();
+        setCartResult(cartResult.data);
+        setTotalItems(countTotalItem(cartResult.data));
+        setTotalPrice(countTotalPrice(cartResult.data));
+
+        dataCache.current[cacheKey] = {
+          productResult: productResult.data,
+          cartResult: cartResult.data,
+        };
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
+    }, 300), // Debounce interval of 300 milliseconds
+    [session, user.id]
   );
 
-  const fetchData = async (query = '') => {
-    try {
-      const token = await session.getToken();
-
-      /** Melakukan GET BusinessInfo */
-      const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      if (!businessResponse.ok) {
-        throw new Error("Failed to fetch business info");
-      }
-      const businessResult = await businessResponse.json();
-      const businessId = businessResult.data[0].businessId;
-
-      /** Melakukan GET All Product */
-      const productResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/product?queryName=${query}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      if (!productResponse.ok) {
-        throw new Error("Failed to fetch products");
-      }
-      const productResult = await productResponse.json();
-      setProductResult(productResult.data);
-
-       /** Melakukan GET Transaction Item Unorder */
-      const cartResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/transactionItem`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      if (!cartResponse.ok) {
-        throw new Error("Failed to fetch products");
-      }
-      const cartResult = await cartResponse.json();
-      setCartResult(cartResult.data);
-    } catch (error) {
-      console.error("Error fetching data: ", error);
-    }
-  };
+  useFocusEffect(
+    useCallback(() => {
+      fetchData(searchQuery);
+    }, [searchQuery])
+  );
 
   const countTotalItem = (cart) => {
     let totalItems = 0;
@@ -118,6 +136,8 @@ export default function Cart() {
               ? { ...cartItem, count: payload.count }
               : cartItem
           ));
+          setTotalItems(countTotalItem(cartResult));
+          setTotalPrice(countTotalPrice(cartResult));
         } else {
           const errorData = await transactionItemResponse.json();
           console.log('Error data:', errorData);
@@ -146,6 +166,8 @@ export default function Cart() {
           console.log('Response data:', responseData);
           // Add new item to cartResult state
           setCartResult(prevCart => [...prevCart, { ...payload, transactionItemId: responseData.transactionItemId }]);
+          setTotalItems(countTotalItem(cartResult));
+          setTotalPrice(countTotalPrice(cartResult));
         } else {
           const errorData = await transactionItemResponse.json();
           console.log('Error data:', errorData);
@@ -162,18 +184,18 @@ export default function Cart() {
         <View className="justify-center items-center mx-[27] h-[50]">
           <Text className="text-2xl font-s">Keranjang</Text>
           <Text className="text-xl font-s">Check Out</Text>
-        </View> 
+        </View>
 
         <View className="flex-row items-center bg-white rounded-lg px-4 shadow h-[45] mx-[27] mt-[30] mb-[10]">
           <Octicons name="search" size={20} color="#9CA3AF"/>
-          <TextInput 
-            placeholder="Cari Produk" 
-            placeholderTextColor="#9CA3AF" 
+          <TextInput
+            placeholder="Cari Produk"
+            placeholderTextColor="#9CA3AF"
             className="ml-[10] font-l bg-white text-base rounded-lg h-[45] flex-1"
             value={searchQuery}
             onChangeText={(text) => setSearchQuery(text)}
           />
-        </View> 
+        </View>
         <View className={`items-center mx-[20] ${totalItems > 0 ? 'mb-[70px]' : 'mb-[130px]'}`}>
           {/* Row 1 */}
           <View className="w-full flex-row flex-wrap justify-between ">
@@ -195,8 +217,8 @@ export default function Cart() {
                       <View className="flex-row items-center justify-between mt-[10]">
                         <Text className="text-[18px] font-s">Rp{product.price.toLocaleString('id-ID')}</Text>
                         <View className="justify-center">
-                        <TouchableOpacity 
-                          onPress={() => addItemToCart(product)} 
+                        <TouchableOpacity
+                          onPress={() => addItemToCart(product)}
                           className={`w-[35px] h-[35px] ${isAddDisabled ? 'bg-gray-400' : 'bg-[#5A4DF3]'} rounded-lg mx-auto items-center justify-center`}
                           disabled={isAddDisabled}
                         >
@@ -208,9 +230,9 @@ export default function Cart() {
                   </View>
                 </View>
               )
-            })}          
+            })}
           </View>
-        </View> 
+        </View>
       </ScrollView>
       {totalItems > 0 ?
         <View className="absolute w-screen bottom-0 bg-gray-200 h-[60] rounded-t-xl flex-row justify-between items-center px-[30]">
@@ -237,4 +259,4 @@ export default function Cart() {
       }
     </View>
   );
-};
+}

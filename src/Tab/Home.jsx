@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { Text, View, ScrollView, TouchableOpacity } from "react-native";
 import { Feather, Ionicons, FontAwesome5, Entypo } from '@expo/vector-icons';
 import CustomBarChart from "../../components/CustomBarChart";
@@ -7,6 +7,7 @@ import { Menu, Provider } from 'react-native-paper';
 import { useSession } from "@clerk/clerk-react";
 import { useUser } from "@clerk/clerk-expo";
 import { useFocusEffect } from "@react-navigation/native";
+import debounce from 'lodash.debounce';
 
 export default function Home() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -16,74 +17,98 @@ export default function Home() {
   const [totalProduct, setTotalProduct] = useState(0);
   const [emptyStockProd, setEmptyStockProd] = useState(0);
   const { session } = useSession();
-
   const { user } = useUser();
-
   const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const dataCache = useRef({});
+
+  const fetchData = useCallback(
+    debounce(async () => {
+      try {
+        const cacheKey = `${user.id}-${selectedYear}`;
+        if (dataCache.current[cacheKey]) {
+          const cachedData = dataCache.current[cacheKey];
+          setData(cachedData.data);
+          setTotalRevenue(cachedData.totalRevenue);
+          setTotalProfit(cachedData.totalProfit);
+          setTotalProduct(cachedData.totalProduct);
+          setEmptyStockProd(cachedData.emptyStockProd);
+          return;
+        }
+
+        const token = await session.getToken();
+
+        /** Melakukan GET BusinessInfo */
+        const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        if (!businessResponse.ok) {
+          throw new Error("Failed to fetch business info");
+        }
+        const businessResult = await businessResponse.json();
+        const businessId = businessResult.data[0].businessId;
+        console.log('Business ID:', businessId);
+
+        /** Melakukan GET All Transaction */
+        const transactionResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/transaction`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        if (!transactionResponse.ok) {
+          throw new Error("Failed to fetch transactions");
+        }
+        const transactionResult = await transactionResponse.json();
+        const filteredData = transactionResult.data.filter(item => new Date(item.createdAt).getFullYear() === selectedYear);
+        const monthlyData = Array(12).fill(0);
+        let yearlyTotalRevenue = 0;
+        filteredData.forEach(item => {
+          const month = new Date(item.createdAt).getMonth();
+          monthlyData[month] += item.totalPayment;
+          yearlyTotalRevenue += item.totalPayment;
+        });
+        setData(monthlyData.map((total, index) => ({ label: `${index + 1}`, value: total })));
+        setTotalRevenue(yearlyTotalRevenue);
+
+        /** Melakukan GET All Product */
+        const productResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/product`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        if (!productResponse.ok) {
+          throw new Error("Failed to fetch products");
+        }
+        const productResult = await productResponse.json();
+        const totalProductResp = productResult.data.length;
+        setTotalProduct(totalProductResp);
+        const emptyStockProduct = productResult.data.filter(item => item.stock === 0).length;
+        setEmptyStockProd(emptyStockProduct);
+        const totalCost = productResult.data
+          .filter(item => new Date(item.createdAt).getFullYear() === selectedYear)
+          .reduce((acc, item) => acc + (item.cost * item.stock), 0);
+        setTotalProfit(yearlyTotalRevenue - totalCost);
+
+        dataCache.current[cacheKey] = {
+          data: monthlyData.map((total, index) => ({ label: `${index + 1}`, value: total })),
+          totalRevenue: yearlyTotalRevenue,
+          totalProfit: yearlyTotalRevenue - totalCost,
+          totalProduct: totalProductResp,
+          emptyStockProd: emptyStockProduct
+        };
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
+    }, 300), // Debounce interval of 300 milliseconds
+    [selectedYear, session, user.id] // Dependencies
+  );
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       fetchData();
     }, [selectedYear])
   );
-
-  const fetchData = async () => {
-    try {
-      const token = await session.getToken();
-
-      console.log(`${API_URL}:${PORT}/business/${user.id}`);
-      /** Melakukan GET BusinessInfo */
-      const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      if (!businessResponse.ok) {
-        throw new Error("Failed to fetch business info");
-      }
-      const businessResult = await businessResponse.json();
-      const businessId = businessResult.data[0].businessId;
-      console.log('Business ID:', businessId);
-
-      /** Melakukan GET All Transaction */
-      const transactionResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/transaction`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      if (!transactionResponse.ok) {
-        throw new Error("Failed to fetch transactions");
-      }
-      const transactionResult = await transactionResponse.json();
-      const filteredData = transactionResult.data.filter(item => new Date(item.createdAt).getFullYear() === selectedYear);
-      const monthlyData = Array(12).fill(0);
-      let yearlyTotalRevenue = 0;
-      filteredData.forEach(item => {
-        const month = new Date(item.createdAt).getMonth();
-        monthlyData[month] += item.totalPayment;
-        yearlyTotalRevenue += item.totalPayment;
-      });
-      setData(monthlyData.map((total, index) => ({ label: `${index + 1}`, value: total })));
-      setTotalRevenue(yearlyTotalRevenue);
-
-      /** Melakukan GET All Product */
-      const productResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/product`);
-      if (!productResponse.ok) {
-        throw new Error("Failed to fetch products");
-      }
-      const productResult = await productResponse.json();
-      const totalProductResp = productResult.data.length;
-      setTotalProduct(totalProductResp);
-      const emptyStockProduct = productResult.data.filter(item => item.stock === 0).length;
-      setEmptyStockProd(emptyStockProduct);
-      const totalCost = productResult.data
-        .filter(item => new Date(item.createdAt).getFullYear() === selectedYear)
-        .reduce((acc, item) => acc + (item.cost * item.stock), 0);
-      setTotalProfit(yearlyTotalRevenue - totalCost);
-    } catch (error) {
-      console.error("Error fetching data: ", error);
-    }
-  };
 
   const formatCurrency = (amount) => {
     return amount.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }).replace(/,00$/, '');
@@ -192,4 +217,4 @@ export default function Home() {
       </View>
     </Provider>
   );
-};
+}
