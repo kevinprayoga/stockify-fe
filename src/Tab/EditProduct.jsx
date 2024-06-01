@@ -4,8 +4,8 @@ import * as ImagePicker from 'expo-image-picker';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import { Formik } from 'formik';
-import { images } from "../../constants";
 import { useSession } from "@clerk/clerk-react";
+import { useUser } from "@clerk/clerk-expo";
 import { API_URL, PORT } from '@env';
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../config/firebaseConfig";
@@ -16,6 +16,7 @@ export default function EditProduct() {
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { session } = useSession();
+    const { user } = useUser();
     const [image, setImage] = useState(null);
     const nav = useNavigation();
     const [product, setProduct] = useState({
@@ -114,7 +115,7 @@ export default function EditProduct() {
 
             const token = await session.getToken();
             /** Melakukan GET BusinessInfo */
-            const businessResponse = await fetch(`${API_URL}:${PORT}/business`, {
+            const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -164,7 +165,7 @@ export default function EditProduct() {
         try {
           const token = await session.getToken();
     
-          const businessResponse = await fetch(`${API_URL}:${PORT}/business`, {
+          const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
             headers: {
               'Authorization': `Bearer ${token}`,
             },
@@ -199,7 +200,7 @@ export default function EditProduct() {
         try {
             const token = await session.getToken();
             /** Melakukan GET BusinessInfo */
-            const businessResponse = await fetch(`${API_URL}:${PORT}/business`, {
+            const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },

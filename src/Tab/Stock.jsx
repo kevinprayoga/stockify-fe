@@ -3,7 +3,8 @@ import { Image, TouchableOpacity, Text, View, TextInput, ScrollView } from "reac
 import { MaterialIcons, Octicons } from '@expo/vector-icons';
 import { images } from "../../constants";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import { useSession } from "@clerk/clerk-expo";
+import { useSession } from "@clerk/clerk-react";
+import { useUser } from "@clerk/clerk-expo";
 import { API_URL, PORT } from '@env';
 
 export default function Stock() {
@@ -13,13 +14,14 @@ export default function Stock() {
 
   const nav = useNavigation();
   const { session } = useSession();
+  const { user } = useUser();
 
   const fetchData = async (query = "") => {
     try {
       const token = await session.getToken();
 
       /** Melakukan GET BusinessInfo */
-      const businessResponse = await fetch(`${API_URL}:${PORT}/business`, {
+      const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },

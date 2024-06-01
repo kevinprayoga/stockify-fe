@@ -24,15 +24,17 @@ export default function Profile() {
   const fetchData = async () => {
     try {
       const token = await session.getToken();
-  
       /** Melakukan GET BusinessInfo */
-      const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`);
+      const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
       if (!businessResponse.ok) {
         throw new Error("Failed to fetch business info");
       }
       const businessResult = await businessResponse.json();
       setBusinessName(businessResult.data[0].businessName);
-      console.log('Business Name:', businessName);
     } catch {
       console.error("Error fetching business info");
     }

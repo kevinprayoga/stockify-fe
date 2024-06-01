@@ -4,7 +4,8 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { Octicons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useSession } from "@clerk/clerk-expo";
+import { useSession } from "@clerk/clerk-react";
+import { useUser } from "@clerk/clerk-expo";
 import { useNavigation } from "@react-navigation/native";
 import { API_URL, PORT } from '@env';
 
@@ -25,26 +26,18 @@ export default function Cart({navigation}) {
   const nav = useNavigation();
 
   const { session } = useSession();
-  const [token, setToken] = useState(null);
+  const { user } = useUser();
 
   useEffect(() => {
     fetchData();
-    const fetchToken = async () => {
-      if (session) {
-        const token = await session.getToken();
-        console.log('Clerk JWT:', token);
-        setToken(token);
-      }
-    };
-    fetchToken();
-  }, [session]);
+  }, []);
 
   const fetchData = async () => {
     try {
       const token = await session.getToken();
 
       /** Melakukan GET BusinessInfo */
-      const businessResponse = await fetch(`${API_URL}:${PORT}/business`, {
+      const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -54,7 +47,6 @@ export default function Cart({navigation}) {
       }
       const businessResult = await businessResponse.json();
       const businessId = businessResult.data[0].businessId;
-      console.log('Business ID:', businessId);
 
       /** Melakukan GET All Product */
       const port=8080;

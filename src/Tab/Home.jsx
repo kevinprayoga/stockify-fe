@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Text, View, ScrollView, TouchableOpacity } from "react-native";
 import { Feather, Ionicons, FontAwesome5, Entypo } from '@expo/vector-icons';
 import CustomBarChart from "../../components/CustomBarChart";
 import { API_URL, PORT } from '@env';
-import { useSession } from "@clerk/clerk-react";
 import { Menu, Provider } from 'react-native-paper';
+import { useSession } from "@clerk/clerk-react";
 import { useUser } from "@clerk/clerk-expo";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -30,19 +30,27 @@ export default function Home() {
   const fetchData = async () => {
     try {
       const token = await session.getToken();
-      console.log(`${API_URL}:${PORT}/business`);
 
       /** Melakukan GET BusinessInfo */
-      const businessResponse = await fetch(`${API_URL}:${PORT}/business`);
+      const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
       if (!businessResponse.ok) {
         throw new Error("Failed to fetch business info");
       }
       const businessResult = await businessResponse.json();
+      console.log(businessResult)
       const businessId = businessResult.data[0].businessId;
       console.log('Business ID:', businessId);
 
       /** Melakukan GET All Transaction */
-      const transactionResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/transaction`);
+      const transactionResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/transaction`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
       if (!transactionResponse.ok) {
         throw new Error("Failed to fetch transactions");
       }

@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, ScrollView, TouchableOpacity } from "react-native";
-import { useFonts } from 'expo-font';
 import { API_URL, PORT } from '@env';
 import { useSession } from "@clerk/clerk-react";
-import { Menu, Provider } from 'react-native-paper';
 import { useUser } from "@clerk/clerk-expo";
 import { useFocusEffect } from "@react-navigation/native";
 
 export default function History({navigation}) {
   const [transactionResult, setTrasactionResult] = useState([]);
   const { session } = useSession();
+  const { user } = useUser();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -17,88 +16,12 @@ export default function History({navigation}) {
     }, [])
   );
 
-//   transactionResult = [
-//     {
-//         "transactionId": "2M0z0s_MjI-zBP_OcriC",
-//         "businessId": "8E-MJkejVenVWJj4",
-//         "transactionItems": [
-//             {
-//                 "count": 1,
-//                 "transactionItemId": "6Brcm-cB6e2MnD-HzGsp",
-//                 "priceItem": 75000,
-//                 "nameItem": "Khong Guan"
-//             },
-//             {
-//                 "count": 2,
-//                 "transactionItemId": "Zz9mldsA86KZMKF9yB93",
-//                 "priceItem": 10000,
-//                 "nameItem": "Sprite"
-//             },
-//             {
-//                 "count": 3,
-//                 "transactionItemId": "nFoweT2DvMiVfsCvoqlI",
-//                 "priceItem": 12000,
-//                 "nameItem": "Taro"
-//             },
-//             {
-//                 "count": 1,
-//                 "transactionItemId": "uSebAKAl8P02hL-mdWQc",
-//                 "priceItem": 55000,
-//                 "nameItem": "Rinso"
-//             }
-//         ],
-//         "totalPayment": 152000,
-//         "createdAt": "2024-05-30T12:59:16.454Z"
-//     },
-//     {
-//         "transactionId": "XCpjeh6Qae7pOWB85QpY",
-//         "businessId": "8E-MJkejVenVWJj4",
-//         "transactionItems": [
-//             {
-//                 "count": 3,
-//                 "transactionItemId": "-rJmHmTmzxPfaRV5bj7w",
-//                 "priceItem": 225000,
-//                 "nameItem": "Khong Guan"
-//             },
-//             {
-//                 "count": 1,
-//                 "transactionItemId": "6vG0NyKeI9nPHVZdyZp1",
-//                 "priceItem": 55000,
-//                 "nameItem": "Rinso"
-//             }
-//         ],
-//         "totalPayment": 280000,
-//         "createdAt": "2024-05-30T12:47:43.014Z"
-//     },
-//     {
-//         "transactionId": "YCv9_nAV5jN2LqFPPNNC",
-//         "businessId": "8E-MJkejVenVWJj4",
-//         "transactionItems": [
-//             {
-//                 "count": 1,
-//                 "priceItem": 55000,
-//                 "transactionItemId": "iJei4aEebU9w5AukI1CZ",
-//                 "nameItem": "Rinso"
-//             },
-//             {
-//                 "count": 3,
-//                 "transactionItemId": "yisSlCy5_auqChzD0kB9",
-//                 "priceItem": 15000,
-//                 "nameItem": "Ultra Milk"
-//             }
-//         ],
-//         "totalPayment": 70000,
-//         "createdAt": "2024-05-30T12:39:35.284Z"
-//     }
-// ]
   const fetchData = async () => {
     try {
       const token = await session.getToken();
 
-      console.log(API_URL, PORT);
-      console.log(token);
       /** Melakukan GET BusinessInfo */
-      const businessResponse = await fetch(`${API_URL}:${PORT}/business`, {
+      const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -109,7 +32,6 @@ export default function History({navigation}) {
       }
       const businessResult = await businessResponse.json();
       const businessId = businessResult.data[0].businessId;
-      console.log('Business ID:', businessId);
 
       /** Melakukan GET All Transaction */
       const transactionResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/transaction`, {

@@ -37,7 +37,7 @@ export default function BusinessInfo() {
       city: kota,
       kecamatan: kecamatan,
       posCode: pos,
-      userId: user.id,
+      userID: user.id,
     };
 
     try {
@@ -46,6 +46,7 @@ export default function BusinessInfo() {
       const response = await fetch(`${API_URL}:${PORT}/business`, {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload)

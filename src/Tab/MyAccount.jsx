@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { TouchableOpacity, Text, View, TextInput, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
-import { useSession } from "@clerk/clerk-react";
 import { useUser } from "@clerk/clerk-expo";
+import { useSession } from "@clerk/clerk-react";
 import { API_URL, PORT } from '@env';
 
 export default function MyAccount() {
@@ -27,7 +27,11 @@ export default function MyAccount() {
   const fetchBusinessData = async () => {
     try {
       const token = await session.getToken();
-      const response = await fetch(`${API_URL}:${PORT}/business/${user.id}`);
+      const response = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
 
       if (!response.ok) {
         throw new Error("Failed to fetch business info");
@@ -69,7 +73,7 @@ export default function MyAccount() {
     try {
       const token = await session.getToken();
 
-      const businessResponse = await fetch(`${API_URL}:${PORT}/business`, {
+      const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },

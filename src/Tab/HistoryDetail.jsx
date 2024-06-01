@@ -2,17 +2,10 @@ import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useFonts } from 'expo-font';
-import { useNavigation, useNavigationParam, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
 export default function HistoryDetail({route, navigation}) {
     const { transaction } = route.params;
-    const [fontsLoaded] = useFonts({
-        "Poppins-Bold": require('../../assets/fonts/Poppins-Bold.ttf'),
-        "Poppins-SemiBold": require('../../assets/fonts/Poppins-SemiBold.ttf'),
-        "Poppins-Medium": require('../../assets/fonts/Poppins-Medium.ttf'),
-        "Poppins-Regular": require('../../assets/fonts/Poppins-Regular.ttf'),
-        "Poppins-Light": require('../../assets/fonts/Poppins-Light.ttf'),
-    });
 
     const nav = useNavigation();
 

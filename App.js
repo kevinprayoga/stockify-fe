@@ -135,7 +135,7 @@ export default function App() {
         <SignedIn>
           <NavigationContainer>
             <SignedInNavigator />
-            <GetClerkToken />
+            {/* <GetClerkToken /> */}
           </NavigationContainer>
         </SignedIn>
         <SignedOut>

@@ -2,8 +2,6 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import Home from "../Tab/Home";
-import Cart from "../Tab/Cart";
-import History from "../Tab/History";
 import StockNavigation from "./StockNavigation";
 import ProfileNavigation from "./ProfileNavigation";
 import HistoryNavigation from "./HistoryNavigation";
@@ -72,7 +70,6 @@ export default function TabNavigation() {
       />
       <Tab.Screen
         name="HistoryNavigation"
-        name="HistoryNavigation"
         component={HistoryNavigation}
         options={{
           tabBarIcon: ({ focused, size }) => (
@@ -84,7 +81,6 @@ export default function TabNavigation() {
         }}
       />
       <Tab.Screen
-        name="ProfileNavigation"
         name="ProfileNavigation"
         component={ProfileNavigation}
         options={{

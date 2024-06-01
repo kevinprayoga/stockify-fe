@@ -3,10 +3,10 @@ import { ScrollView, Text, TouchableOpacity, View, Image, TextInput, ActivityInd
 import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useFonts } from 'expo-font';
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from 'formik';
 import { useSession } from "@clerk/clerk-react";
+import { useUser } from "@clerk/clerk-expo";
 import { API_URL, PORT } from '@env';
 
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -18,6 +18,7 @@ export default function AddProduct() {
     const [isLoading, setIsLoading] = useState(false);
 
     const { session } = useSession();
+    const { user } = useUser();
     const nav = useNavigation();
 
     const pickImage = async () => {
@@ -80,9 +81,9 @@ export default function AddProduct() {
 
             const token = await session.getToken();
             /** Melakukan GET BusinessInfo */
-            const businessResponse = await fetch(`${API_URL}:${PORT}/business`, {
+            const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
                 headers: {
-                'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${token}`,
                 },
             });
             if (!businessResponse.ok) {
@@ -92,8 +93,6 @@ export default function AddProduct() {
             const businessId = businessResult.data[0].businessId;
 
             // Lakukan operasi penyimpanan data produk ke database
-            console.log('Business ID:', businessId);
-            console.log('Token:', token);
             const payload = {
                 businessId: businessId,
                 productName: value.productName,

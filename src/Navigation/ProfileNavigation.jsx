@@ -1,12 +1,7 @@
 import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
 import AboutApp from "../Tab/AboutApp";
 import HelpSupport from "../Tab/HelpSupport";
 import MyAccount from "../Tab/MyAccount";
-
-import { View, Text } from 'react-native';
-import { Entypo, Feather, MaterialCommunityIcons, FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { config, closeConfig } from "../../hooks/animation";
 import Profile from '../Tab/Profile';
