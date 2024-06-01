@@ -33,11 +33,7 @@ export default function Home() {
       console.log(`${API_URL}:${PORT}/business`);
 
       /** Melakukan GET BusinessInfo */
-      const businessResponse = await fetch(`${API_URL}:${PORT}/business`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const businessResponse = await fetch(`${API_URL}:${PORT}/business`);
       if (!businessResponse.ok) {
         throw new Error("Failed to fetch business info");
       }
@@ -46,11 +42,7 @@ export default function Home() {
       console.log('Business ID:', businessId);
 
       /** Melakukan GET All Transaction */
-      const transactionResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/transaction`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const transactionResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/transaction`);
       if (!transactionResponse.ok) {
         throw new Error("Failed to fetch transactions");
       }
@@ -67,11 +59,7 @@ export default function Home() {
       setTotalRevenue(yearlyTotalRevenue);
 
       /** Melakukan GET All Product */
-      const productResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/product`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const productResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/product`);
       if (!productResponse.ok) {
         throw new Error("Failed to fetch products");
       }

@@ -3,6 +3,7 @@ import { TouchableOpacity, Text, View, TextInput, KeyboardAvoidingView, Platform
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
 import { useSession } from "@clerk/clerk-react";
+import { useUser } from "@clerk/clerk-expo";
 import { API_URL, PORT } from '@env';
 
 export default function MyAccount() {
@@ -16,6 +17,7 @@ export default function MyAccount() {
   const [submitPressed, setSubmitPressed] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const { session } = useSession();
+  const { user } = useUser();
   const nav = useNavigation();
 
   useEffect(() => {
@@ -25,11 +27,7 @@ export default function MyAccount() {
   const fetchBusinessData = async () => {
     try {
       const token = await session.getToken();
-      const response = await fetch(`${API_URL}:${PORT}/business`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(`${API_URL}:${PORT}/business/${user.id}`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch business info");

@@ -3,6 +3,7 @@ import { Text, TextInput, TouchableOpacity, View, ScrollView, KeyboardAvoidingVi
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
 import { useSession } from "@clerk/clerk-react";
+import { useUser } from "@clerk/clerk-expo";
 import { API_URL, PORT } from '@env';
 
 export default function BusinessInfo() {
@@ -17,6 +18,7 @@ export default function BusinessInfo() {
   const [isSubmitting, setIsSubmitting] = useState(false); // State untuk mengatur submit status
   const { setOrigin } = useAuth();
   const { session } = useSession();
+  const { user } = useUser();
   const nav = useNavigation();
 
   const handleSubmit = async () => {
@@ -34,7 +36,8 @@ export default function BusinessInfo() {
       province: provinsi,
       city: kota,
       kecamatan: kecamatan,
-      posCode: pos
+      posCode: pos,
+      userId: user.id,
     };
 
     try {
@@ -43,8 +46,7 @@ export default function BusinessInfo() {
       const response = await fetch(`${API_URL}:${PORT}/business`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload)
       });

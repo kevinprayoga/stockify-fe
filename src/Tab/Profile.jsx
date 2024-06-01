@@ -26,12 +26,7 @@ export default function Profile() {
       const token = await session.getToken();
   
       /** Melakukan GET BusinessInfo */
-      const businessResponse = await fetch(`${API_URL}:${PORT}/business`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      console.log('Token:');
+      const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`);
       if (!businessResponse.ok) {
         throw new Error("Failed to fetch business info");
       }
