@@ -32,7 +32,6 @@ export default function MyAccount() {
           'Authorization': `Bearer ${token}`,
         },
       });
-
       if (!response.ok) {
         throw new Error("Failed to fetch business info");
       }

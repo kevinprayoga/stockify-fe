@@ -1,21 +1,59 @@
-import React from "react";
-import { ScrollView, Text, TouchableOpacity, View,Image } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState } from "react";
+import { ScrollView, Text, TouchableOpacity, View, Image } from "react-native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useFonts } from 'expo-font';
+import { useSession } from "@clerk/clerk-react";
+import { useUser } from "@clerk/clerk-expo";
+import { API_URL, PORT } from '@env';
 
-export default function Order({route, navigation}) {
-    const { cart } = route.params;
-    console.log(cart);
-    const [fontsLoaded] = useFonts({
-        "Poppins-Bold": require('../../assets/fonts/Poppins-Bold.ttf'),
-        "Poppins-Regular": require('../../assets/fonts/Poppins-Regular.ttf')
-    });
-
+export default function Order() {
     const nav = useNavigation();
+    const [cart, setCart] = useState([]);
+    const { session } = useSession();
+    const { user } = useUser();
 
     const cartPageHandler = () => {
         nav.navigate("Cart");
+    }
+
+    useFocusEffect(
+        React.useCallback(() => {
+          fetchData();
+        }, [])
+    );
+
+    const getBusinessId = async () => {
+        const token = await session.getToken();
+
+        /** Melakukan GET BusinessInfo */
+        const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        if (!businessResponse.ok) {
+          throw new Error("Failed to fetch business info");
+        }
+        const businessResult = await businessResponse.json();
+        const businessId = businessResult.data[0].businessId;
+        return businessId;
+    };
+
+    const fetchData = async () => {
+        const token = await session.getToken();
+        const businessId = await getBusinessId();
+
+        /** Melakukan GET Transaction Item Unorder */
+        const cartResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/transactionItem`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+        if (!cartResponse.ok) {
+            throw new Error("Failed to fetch products");
+        }
+        const cartResult = await cartResponse.json();
+        setCart(cartResult.data);
     }
 
     const countTotalPrice = (cart) => {
@@ -24,19 +62,95 @@ export default function Order({route, navigation}) {
           totalPrice += item.priceItem * item.count;
         });
         return totalPrice;
-      }
+    };
 
-    const incrementItemCount = (item) => {
-        console.log("Incrementing item count")
-    }
+    const updateItem = async(payload, transactionItemId) => {
+        const token = await session.getToken();
+        const businessId = await getBusinessId();
 
-    const decrementItemCount = (item) => {
-        console.log("Decrementing item count")
-    }
+        try {
+            /** Melakukan PUT TransactionItem */
+            const transactionItemResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/transactionItem/${transactionItemId}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+            if (transactionItemResponse.ok) {
+                const responseData = await transactionItemResponse.json();
+                console.log('Response data:', responseData);
+                // Perbarui state cart dengan item yang diperbarui
+                setCart(prevCart => {
+                    const updatedCart = prevCart.map(item =>
+                        item.transactionItemId === transactionItemId ? { ...item, ...payload } : item
+                    ).filter(item => item.count > 0); // Hapus item dengan count 0
 
-    const orderHandler = (cart) => {
-        console.log("Ordering items")
-    }
+                    if (updatedCart.length === 0) {
+                        nav.navigate("Cart");
+                    }
+                    return updatedCart;
+                });
+            } else {
+                const errorData = await transactionItemResponse.json();
+                console.log('Error data:', errorData);
+            }
+        } catch (error) {
+            console.error("Error update transaction item: ", error);
+        }
+    };
+
+    const incrementItemCount = async(item) => {
+        /** Melakukan PUT TransactionItem */
+        const payload = {
+            count: item.count + 1,
+        };
+        await updateItem(payload, item.transactionItemId);
+        console.log("Incrementing item count");
+    };
+
+    const decrementItemCount = async(item) => {
+        /** Melakukan PUT TransactionItem */
+        const payload = {
+            count: item.count - 1,
+        };
+        await updateItem(payload, item.transactionItemId);
+        console.log("Decrementing item count");
+    };
+
+    const orderHandler = async(cart) => {
+        try {
+            const token = await session.getToken();
+            const businessId = await getBusinessId();
+            const totalPayment = countTotalPrice(cart);
+            /** Melakukan POST TransactionItem */
+            const payload = {
+                businessId: businessId,
+                totalPayment : totalPayment,
+            };
+            console.log('Payload:', payload);
+            const transactionResponse = await fetch(`${API_URL}:${PORT}/business/transaction`, {
+                method: 'POST',
+                headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+            console.log('Response:', transactionResponse);
+            if (transactionResponse.ok) {
+                const responseData = await transactionResponse.json();
+                console.log('Response data:', responseData);
+            } else {
+                const errorData = await transactionResponse.json();
+                console.log('Error data:', errorData);
+            }
+        } catch (error) {
+            console.error('Error submitting transaction:', error);
+        }
+        console.log("Ordering items");
+    };
 
     return (
         <View>
@@ -53,45 +167,45 @@ export default function Order({route, navigation}) {
 
                 {/* Tabel */}
                 <View className="mx-[27] mt-[30]">
-                    {cart.map((item) => (
-                        <View className="flex-row justify-between my-[10]">
-                            <View className="flex-row">
-                                {/* Image */}
-                                <View className="items-center justify-center">
-                                    <Image source={{uri:item.image}} style={{width: 60, height: 45}} className="rounded-xl"></Image>
+                    {cart.map((item) => {
+                        const isAddDisabled = item.count >= item.stock;
+                        return (
+                            <View key={item.transactionItemId} className="flex-row justify-between my-[10]">
+                                <View className="flex-row">
+                                    {/* Image */}
+                                    <View className="items-center justify-center">
+                                        <Image source={{uri:item.image}} style={{width: 60, height: 45}} className="rounded-xl"></Image>
+                                    </View>
+                                    {/* Item Description */}
+                                    <View className="justify-center ml-[15]">
+                                        <Text className="font-b text-xl">{item.nameItem}</Text>
+                                        <Text className="font-s text-base">Rp{item.priceItem.toLocaleString('ID-id')}</Text>
+                                    </View>
                                 </View>
-                                {/* Item Description */}
-                                <View className="justify-center ml-[15]">
-                                    <Text className="font-b text-xl">{item.nameItem}</Text>
-                                    <Text className="font-s text-base">Rp{item.priceItem.toLocaleString('ID-id')}</Text>
+                                <View className="flex-row items-center">
+                                    {/* Minus */}
+                                    <TouchableOpacity 
+                                        onPress={() => decrementItemCount(item)}
+                                        className="mr-[10] w-[30px] h-[30px] bg-[#17D183] border-white rounded-full items-center justify-center"
+                                    >
+                                        <AntDesign name="minus" size={15} color="black" className="p-[5]"/>
+                                    </TouchableOpacity>
+                                    {/* Amount */}
+                                    <Text className="text-xl font-s">
+                                        {item.count}
+                                    </Text>
+                                    {/* Plus */}
+                                    <TouchableOpacity 
+                                        onPress={() => incrementItemCount(item)}
+                                        className={`ml-[10] w-[30px] h-[30px] ${isAddDisabled ? 'bg-gray-400' : 'bg-[#17D183]'} border-white rounded-full items-center justify-center`}
+                                        disabled={isAddDisabled}
+                                    >
+                                        <AntDesign name="plus" size={15} color="black" className="p-[5]"/>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
-                            <View className="flex-row items-center">
-                                {/* Minus */}
-                                <TouchableOpacity 
-                                    onPress={() => decrementItemCount(item)}
-                                    className="mr-[10] w-[30px] h-[30px] bg-[#17D183] border-white rounded-full items-center justify-center"
-                                >
-                                    <AntDesign name="minus" size={15} color="black" className="p-[5]"/>
-                                </TouchableOpacity>
-                                {/* Amount */}
-                                <Text className="text-xl font-s">
-                                    {item.count}
-                                </Text>
-                                {/* Plus */}
-                                <TouchableOpacity 
-                                    onPress={() => incrementItemCount(item)}
-                                    className="ml-[10] w-[30px] h-[30px] bg-[#17D183] border-white rounded-full items-center justify-center"
-                                >
-                                    <AntDesign name="plus" size={15} color="black" className="p-[5]"/>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-
-                    ))}
-                    
-                    {/* Row 2 */}
-                    
+                        );
+                    })}                
                 </View>
                 {/* Payment Summary */}
                 <View className="mx-[27]">
@@ -114,4 +228,4 @@ export default function Order({route, navigation}) {
             </ScrollView>
         </View>
     );
-}
+};

@@ -31,6 +31,7 @@ export default function Home() {
     try {
       const token = await session.getToken();
 
+      console.log(`${API_URL}:${PORT}/business/${user.id}`);
       /** Melakukan GET BusinessInfo */
       const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
         headers: {
@@ -41,7 +42,6 @@ export default function Home() {
         throw new Error("Failed to fetch business info");
       }
       const businessResult = await businessResponse.json();
-      console.log(businessResult)
       const businessId = businessResult.data[0].businessId;
       console.log('Business ID:', businessId);
 

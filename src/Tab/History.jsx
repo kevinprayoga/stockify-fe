@@ -27,7 +27,6 @@ export default function History({navigation}) {
         },
       });
       if (!businessResponse.ok) {
-        console.log(businessResponse);
         throw new Error("Failed to fetch business info");
       }
       const businessResult = await businessResponse.json();
@@ -43,7 +42,6 @@ export default function History({navigation}) {
         throw new Error("Failed to fetch transactions");
       }
       const transactionResult = await transactionResponse.json();
-      console.log(transactionResult);
       setTrasactionResult(transactionResult.data);
       
     } catch (error) {

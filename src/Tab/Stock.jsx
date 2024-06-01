@@ -19,7 +19,6 @@ export default function Stock() {
   const fetchData = async (query = "") => {
     try {
       const token = await session.getToken();
-
       /** Melakukan GET BusinessInfo */
       const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
         headers: {

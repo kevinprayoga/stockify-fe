@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, Text, TouchableOpacity, View, Image, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View, Image, TextInput, KeyboardAvoidingView, Platform, ActivityIndicator, Modal } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import { Formik } from 'formik';
+import { images } from "../../constants";
 import { useSession } from "@clerk/clerk-react";
 import { useUser } from "@clerk/clerk-expo";
 import { API_URL, PORT } from '@env';
@@ -16,9 +17,9 @@ export default function EditProduct() {
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { session } = useSession();
-    const { user } = useUser();
     const [image, setImage] = useState(null);
     const nav = useNavigation();
+    const { user } = useUser();
     const [product, setProduct] = useState({
         productName: '',
         cost: '',
@@ -26,6 +27,9 @@ export default function EditProduct() {
         stock: '',
         image: ''
     });
+    const [isSaveModalVisible, setIsSaveModalVisible] = useState(false);
+    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+    const [formValues, setFormValues] = useState(null);
 
     useFocusEffect(
         React.useCallback(() => {
@@ -35,7 +39,6 @@ export default function EditProduct() {
 
     useEffect(() => {
         if (product.productName) {
-            // When product data is fetched, set the initial values for Formik
             setInitialValues({
                 productName: product.productName,
                 cost: product.cost.toString(),
@@ -83,50 +86,45 @@ export default function EditProduct() {
         }
     };
 
-    const saveChangeHandler = async(value) => {
+    const handleSave = async (value) => {
         setErrorMessage('');
         setIsLoading(true);
         try {
             value.cost = parseInt(value.cost);
             value.price = parseInt(value.price);
             value.stock = parseInt(value.stock);
+            console.log('Value:', value);
 
-            if (!value.image) {
-                value.image = product.image;
-            } else {
-                value.image = image;
-
-                /**Convert URI to Blob File */
+            if (value.image !== product.image) {
                 const respImage = await fetch(image);
                 const blob = await respImage.blob();
                 const storageRef = ref(storage, 'productStockify/' + Date.now() + '.jpg');
 
-                // 'file' comes from the Blob or File API
                 await uploadBytes(storageRef, blob);
                 const downloadUrl = await getDownloadURL(storageRef);
                 value.image = downloadUrl;
             }
+            
             if (!value.productName || !value.cost || !value.price || !value.stock || !value.image) {
                 setErrorMessage('Semua field harus diisi');
                 setIsLoading(false);
-                value.stock = 0;
                 return;
             }
 
             const token = await session.getToken();
-            /** Melakukan GET BusinessInfo */
             const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
             });
+
             if (!businessResponse.ok) {
                 throw new Error("Failed to fetch business info");
             }
+
             const businessResult = await businessResponse.json();
             const businessId = businessResult.data[0].businessId;
 
-            // Lakukan operasi penyimpanan data produk ke database
             const payload = {
                 businessId: businessId,
                 productName: value.productName,
@@ -146,12 +144,8 @@ export default function EditProduct() {
             });
 
             if (response.ok) {
-                const responseData = await response.json();
-                console.log('Product updated:', responseData);
                 stockPageHandler();
             } else {
-                const errorData = await response.json();
-                console.error('Error data:', errorData);
                 setErrorMessage('Gagal menyimpan data produk');
             }
         } catch (error) {
@@ -161,45 +155,44 @@ export default function EditProduct() {
         }
     };
 
-    const deleteProductHandler = async () => {
+    const handleDelete = async () => {
         try {
-          const token = await session.getToken();
-    
-          const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-            },
-          });
-    
-          if (!businessResponse.ok) {
-            throw new Error("Failed to fetch business info");
-          }
-    
-          const businessResult = await businessResponse.json();
-          const businessId = businessResult.data[0].businessId;
-    
-          const response = await fetch(`${API_URL}:${PORT}/business/${businessId}/product/${productId}`, {
-            method: 'DELETE',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-            },
-          });
-    
-          if (response.ok) {
-            stockPageHandler();
-          } else {
-            const errorData = await response.json();
-            console.error('Error data:', errorData);
-          }
+            const token = await session.getToken();
+
+            const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (!businessResponse.ok) {
+                throw new Error("Failed to fetch business info");
+            }
+
+            const businessResult = await businessResponse.json();
+            const businessId = businessResult.data[0].businessId;
+
+            const response = await fetch(`${API_URL}:${PORT}/business/${businessId}/product/${productId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                stockPageHandler();
+            } else {
+                const errorData = await response.json();
+                console.error('Error data:', errorData);
+            }
         } catch (error) {
-          console.error('Error delete product:', error);
+            console.error('Error delete product:', error);
         }
     };
 
     const fetchProductData = async () => {
         try {
             const token = await session.getToken();
-            /** Melakukan GET BusinessInfo */
             const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -211,7 +204,6 @@ export default function EditProduct() {
             const businessResult = await businessResponse.json();
             const businessId = businessResult.data[0].businessId;
 
-            /** Melakukan GET id Produk */
             const productResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/product/${productId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -238,22 +230,22 @@ export default function EditProduct() {
                 <View className="items-center mt-[30]">
                     <Text className="text-xl font-h"></Text>
                 </View>
-                {/* Back Button */}
                 <View className="absolute mt-[25]">
                     <TouchableOpacity onPress={stockPageHandler} className="ml-[27] w-[30px] h-[30px] bg-[#5A4DF3] rounded-full items-center justify-center">
                         <AntDesign name="arrowleft" size={15} color="white"/>
                     </TouchableOpacity>    
                 </View>
                 <ScrollView className="mx-[27] mt-[30]">
-                    {/* Form */}
                     <Formik
                         enableReinitialize={true}
                         initialValues={initialValues}
-                        onSubmit={value => saveChangeHandler(value)}
+                        onSubmit={(values) => {
+                            setFormValues(values);
+                            setIsSaveModalVisible(true);
+                        }}
                     >
                         {({ handleChange, handleBlur, handleSubmit, values, setFieldValue, error }) => (
                             <View>
-                                {/* Picture */}
                                 <View className="items-center">
                                     <View className="relative w-[240] h-[180] justify-end">
                                         { image ? (
@@ -276,7 +268,6 @@ export default function EditProduct() {
                                 {errorMessage ? (
                                     <Text className="font-r text-red-500 mt-2">{errorMessage}</Text>
                                 ) : null}
-                                {/* Nama Produk */}
                                 <View className="mt-[10]">
                                     <Text className="text-[#5A4DF3] pl-2 font-s">Nama Produk</Text>
                                     <TextInput 
@@ -286,7 +277,6 @@ export default function EditProduct() {
                                         className="bg-white rounded-lg h-[45] w-full px-4 shadow font-l border border-[#5A4DF3]"
                                     />
                                 </View>
-                                {/* Harga Pokok dan Harga Jual */}
                                 <View className="flex-row justify-between mt-[10]">
                                     <View className="w-1/2 pr-1">
                                         <Text className="text-[#5A4DF3] pl-2 font-s">Harga Pokok</Text>
@@ -309,7 +299,6 @@ export default function EditProduct() {
                                         />
                                     </View>
                                 </View>
-                                {/* Jumlah Stok */}
                                 <View className="mt-[20]">
                                     <View className="bg-white rounded-lg h-[60] w-full shadow font-l border border-[#5A4DF3] flex-row justify-between items-center">
                                         <Text className="text-[#5A4DF3] pl-4 font-s">Jumlah Stok</Text>
@@ -361,7 +350,7 @@ export default function EditProduct() {
                                 )}
                                 <View className="mt-[10]">
                                     <TouchableOpacity 
-                                        onPress={deleteProductHandler}
+                                        onPress={() => setIsDeleteModalVisible(true)}
                                         className="bg-[#F13131] h-[45] rounded-xl items-center justify-center"
                                     >
                                         <Text className="text-lg font-s text-white">Hapus Produk</Text>
@@ -371,7 +360,79 @@ export default function EditProduct() {
                         )}
                     </Formik>
                 </ScrollView>
+                <Modal
+                    visible={isSaveModalVisible}
+                    transparent={true}
+                    animationType="slide"
+                >
+                    <View className="flex-1 items-center justify-center">
+                        <View className="bg-white bg-opacity-30 h-[300] w-[240] rounded-3xl items-center z-20 m-auto mt-64">
+                            <Image source={images.save} className="mt-[30]" />
+                            <Text className="font-b text-2xl text-[#5A4DF3] mt-[20]">Simpan Perubahan</Text>
+                            <Text className="font-l mt-[10]">Apakah Anda ingin</Text>
+                            <Text className="font-l">menyimpan perubahan?</Text>
+                            <View className="flex-row mt-[15]">
+                                <View className="pr-1">
+                                    <TouchableOpacity
+                                        className="w-[90] h-[30] rounded-lg border border-[#5A4DF3] items-center justify-center"
+                                        onPress={() => setIsSaveModalVisible(false)}
+                                    >
+                                        <Text className="text-[#5A4DF3] font-s">Batal</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <View className="pl-1">
+                                    <TouchableOpacity
+                                        className="w-[90] h-[30] rounded-lg bg-[#5A4DF3] items-center justify-center"
+                                        onPress={() => {
+                                            setIsSaveModalVisible(false);
+                                            handleSave(formValues);
+                                        }}
+                                    >
+                                        <Text className="text-white font-s">Ya</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                        <View className="bg-black h-screen w-screen z-0 opacity-50" />
+                    </View>
+                </Modal>
+                <Modal
+                    visible={isDeleteModalVisible}
+                    transparent={true}
+                    animationType="slide"
+                >
+                    <View className="flex-1 items-center justify-center">
+                        <View className="bg-white bg-opacity-30 h-[300] w-[240] rounded-3xl items-center z-20 m-auto mt-64">
+                            <Image source={images.delete_icon} className="mt-[15]" />
+                            <Text className="font-s text-2xl text-[#F13131] mt-[20]">Hapus Produk</Text>
+                            <Text className="font-l mt-[10]">Apakah Anda ingin menghapus</Text>
+                            <Text className="font-l">produk yang dimaksud?</Text>
+                            <View className="flex-row mt-[15]">
+                                <View className="pr-1">
+                                    <TouchableOpacity
+                                        className="w-[90] h-[30] rounded-lg border border-gray-600 items-center justify-center"
+                                        onPress={() => setIsDeleteModalVisible(false)}
+                                    >
+                                        <Text className="text-gray-600 font-s">Batal</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <View className="pl-1">
+                                    <TouchableOpacity
+                                        className="bg-[#F13131] w-[90] h-[30] rounded-lg items-center justify-center"
+                                        onPress={() => {
+                                            setIsDeleteModalVisible(false);
+                                            handleDelete();
+                                        }}
+                                    >
+                                        <Text className="text-white font-s">Hapus</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                        <View className="bg-black h-screen w-screen z-0 opacity-50" />
+                    </View>
+                </Modal>
             </ScrollView>
         </KeyboardAvoidingView>
     );
-};
+}

@@ -4,7 +4,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { useFonts } from 'expo-font';
 import { useNavigation } from "@react-navigation/native";
 
-export default function HistoryDetail({route, navigation}) {
+export default function HistoryDetail({route}) {
     const { transaction } = route.params;
 
     const nav = useNavigation();
@@ -46,7 +46,10 @@ export default function HistoryDetail({route, navigation}) {
                 {/* ID Produk & Status */}
                 <View className="border-b border-gray-200 flex-row justify-between items-center p-[15]">
                     <View>
-                        <Text className="text-[17px] font-s">ID: {transaction.transactionId}</Text>
+                        <View className="flex-row items-center">
+                            <Text className="text-[17px] font-s">ID: </Text>
+                            <Text className="text-[17px] font-s text-sm">{transaction.transactionId}</Text>
+                        </View>
                         <Text className="text-[13px] text-gray-400 font-p">{formatDate(transaction.createdAt)}</Text>
                     </View>
                     <View className="flex-row items-center">
@@ -57,7 +60,7 @@ export default function HistoryDetail({route, navigation}) {
                 {/* Daftar Item */}
                 <View className="px-[15] py-[5]">
                     {transaction.transactionItems.map((item) => (
-                        <View className="flex-row justify-between items-center">
+                        <View key={item.transactionItemId} className="flex-row justify-between items-center">
                             <View className="flex-row p-[10]">
                                 <Text className="w-[30] font-s">{item.count}</Text><Text className="font-s">{item.nameItem}</Text>
                             </View>
