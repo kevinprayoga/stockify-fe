@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { ClerkProvider, SignedIn, SignedOut, useSession } from '@clerk/clerk-expo';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
+import { ClerkProvider, SignedIn, SignedOut, useSession, useUser } from '@clerk/clerk-expo';
 import * as SecureStore from "expo-secure-store";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation, useFocusEffect } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import Landing1 from "./src/LandingPage/Landing1";
@@ -12,10 +14,8 @@ import TabNavigation from "./src/Navigation/TabNavigation";
 import BusinessInfo from "./src/LandingPage/BusinessInfo";
 
 import { config, closeConfig } from "./hooks/animation";
-import { AuthProvider } from './src/context/AuthContext';
-import { View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { useAuth } from './src/context/AuthContext';
+import { AuthProvider, useAuth } from './src/context/AuthContext';
+import { API_URL, PORT } from '@env';
 
 const tokenCache = {
   getToken(key) {
@@ -28,14 +28,70 @@ const tokenCache = {
 
 const Stack = createNativeStackNavigator();
 
-function SignedInNavigator() {
-  const { origin } = useAuth();
-  const nav = useNavigation();
-  useEffect(() => {
-    if (origin === 'register') {
-      nav.navigate('BusinessInfo');
+async function fetchBusinessId(session, user) {
+  try {
+    const token = await session.getToken();
+    const response = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Gagal mengambil data bisnis");
     }
-  }, [origin]);
+
+    const result = await response.json();
+    return result.data[0].businessId;
+  } catch (error) {
+    console.error("Error fetching business info", error);
+    return null;
+  }
+}
+
+function SignedInNavigator() {
+  const { origin, setOrigin } = useAuth();
+  const { session } = useSession();
+  const { user } = useUser();
+  const [businessId, setBusinessId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const nav = useNavigation();
+
+  useFocusEffect(
+    useCallback(() => {
+      async function getBusinessId() {
+        setIsLoading(true);
+        const id = await fetchBusinessId(session, user);
+        setBusinessId(id);
+        setIsLoading(false);
+      }
+
+      getBusinessId();
+    }, [session, user])
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      if (isLoading) return;
+      if (businessId === null) {
+        setOrigin('register');
+        nav.navigate('BusinessInfo');
+      } else {
+        setOrigin('login');
+        nav.navigate('TabHome');
+      }
+    }, [origin, businessId, isLoading, nav, setOrigin])
+  );
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
+    );
+  }
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -49,16 +105,19 @@ function SignedInNavigator() {
       headerMode="float"
       animation="fade"
     >
-      <Stack.Screen
-        name="TabHome"
-        component={TabNavigation}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="BusinessInfo"
-        component={BusinessInfo}
-        options={{ headerShown: false }}
-      />
+      {businessId ? (
+        <Stack.Screen
+          name="TabHome"
+          component={TabNavigation}
+          options={{ headerShown: false }}
+        />
+      ) : (
+        <Stack.Screen
+          name="BusinessInfo"
+          component={BusinessInfo}
+          options={{ headerShown: false }}
+        />
+      )}
     </Stack.Navigator>
   );
 }
@@ -147,3 +206,15 @@ export default function App() {
     </AuthProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 20,
+    textAlign: 'center',
+  },
+});

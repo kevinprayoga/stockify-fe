@@ -114,7 +114,7 @@ export default function AddProduct() {
             if (response.ok) {
               const responseData = await response.json();
               console.log('Response data:', responseData);
-              stockPageHandler();
+              nav.goBack();
             } else {
               const errorData = await response.json();
               console.log('Error data:', errorData);

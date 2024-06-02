@@ -58,7 +58,7 @@ export default function BusinessInfo() {
         setIsSubmitting(true);
         nav.push('TabHome');
         setSubmitPressed(false);
-        setOrigin(null);
+        setOrigin('login');
       } else {
         const errorData = await response.json();
         console.log('Error data:', errorData);

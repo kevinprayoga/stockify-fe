@@ -144,7 +144,7 @@ export default function EditProduct() {
             });
 
             if (response.ok) {
-                stockPageHandler();
+                nav.goBack();
             } else {
                 setErrorMessage('Gagal menyimpan data produk');
             }

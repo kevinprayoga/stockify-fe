@@ -1,10 +1,11 @@
 import React, { useState, useCallback, useRef } from "react";
-import { Text, View, ScrollView, TouchableOpacity } from "react-native";
+import { Text, View, ScrollView, TouchableOpacity, Image } from "react-native";
 import { API_URL, PORT } from '@env';
 import { useSession } from "@clerk/clerk-react";
 import { useUser } from "@clerk/clerk-expo";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from '@react-navigation/native';
 import debounce from 'lodash.debounce';
+import { images } from "../../constants"; // Pastikan ini adalah jalur yang benar ke gambar
 
 export default function History({ navigation }) {
   const [transactionResult, setTransactionResult] = useState([]);
@@ -15,11 +16,6 @@ export default function History({ navigation }) {
   const fetchData = useCallback(
     debounce(async () => {
       try {
-        if (dataCache.current) {
-          setTransactionResult(dataCache.current);
-          return;
-        }
-
         const token = await session.getToken();
 
         /** Melakukan GET BusinessInfo */
@@ -45,7 +41,6 @@ export default function History({ navigation }) {
         }
         const transactionResult = await transactionResponse.json();
         setTransactionResult(transactionResult.data);
-        dataCache.current = transactionResult.data;
       } catch (error) {
         console.error("Error fetching data: ", error);
       }
@@ -54,7 +49,7 @@ export default function History({ navigation }) {
   );
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       fetchData();
     }, [fetchData])
   );
@@ -86,41 +81,51 @@ export default function History({ navigation }) {
   };
 
   return (
-    <View className="bg-[#F5F6F7]">
-      <ScrollView className="mt-[50] h-screen bg-[#F5F6F7]">
+    <View className="bg-[#F5F6F7] flex-1">
+      <ScrollView className="mt-[50] bg-[#F5F6F7] flex-1">
         <View className="justify-center items-center mx-[27] h-[50]">
           <Text className="text-2xl font-s">Riwayat</Text>
           <Text className="text-xl font-s">Transaksi</Text>
         </View> 
         
-        <View className="mt-[30] mb-[130px]">
-          {transactionResult.map((transaction) => (
-            <View key={transaction.transactionId} className="mb-[10] mx-[27] bg-white rounded-lg p-[15] shadow">
-              {/* ID & Date */}
-              <View className="flex-row justify-between items-center border-b border-gray-200 pb-[8]">
-                <Text className="text-[16px] font-b">ID: {transaction.transactionId}</Text>
-                <Text className="text-[13px] text-gray-400 font-r">{formatDate(transaction.createdAt)}</Text>
-              </View>
-              {/* Item & Total Harga */}
-              <View className="flex-row justify-between items-center border-bottom pt-[8]">
-                <View className="flex-row">
-                  <Text className="text-[17px] font-l text-gray-500">Jumlah Item: </Text><Text className="text-[17px] font-s">{countTotalItem(transaction)}</Text>
+        {transactionResult.length === 0 ? (
+          <View className="flex-1 justify-center items-center mt-80">
+            <Image
+              source={images.landing}
+              className="w-32 h-10"
+            />
+            <Text className="text-gray-500 font-r mt-4">Mohon lakukan transaksi!</Text>
+          </View>
+        ) : (
+          <View className="mt-[30] mb-[130px]">
+            {transactionResult.map((transaction) => (
+              <View key={transaction.transactionId} className="mb-[10] mx-[27] bg-white rounded-lg p-[15] shadow">
+                {/* ID & Date */}
+                <View className="flex-row justify-between items-center border-b border-gray-200 pb-[8]">
+                  <Text className="text-[16px] font-b">ID: {transaction.transactionId}</Text>
+                  <Text className="text-[13px] text-gray-400 font-r">{formatDate(transaction.createdAt)}</Text>
                 </View>
-                <View className="">
+                {/* Item & Total Harga */}
+                <View className="flex-row justify-between items-center border-bottom pt-[8]">
                   <View className="flex-row">
-                    <Text className="text-[15px] font-l text-gray-500">Total: </Text><Text className="text-[15px] font-b">Rp{transaction.totalPayment.toLocaleString('id-ID')}</Text>
+                    <Text className="text-[17px] font-l text-gray-500">Jumlah Item: </Text><Text className="text-[17px] font-s">{countTotalItem(transaction)}</Text>
                   </View>
-                  {/* Detail Button */}
-                  <View className="flex-row justify-end items-center border-bottom mt-[10]">
-                    <TouchableOpacity onPress={() => historyDetailPageHandler(transaction)} className="bg-[#5A4DF3] w-[80] py-[5] rounded-lg items-center">
-                      <Text className="text-white text-[15px] font-s pt-[3]">Detail</Text>
-                    </TouchableOpacity>
+                  <View className="">
+                    <View className="flex-row">
+                      <Text className="text-[15px] font-l text-gray-500">Total: </Text><Text className="text-[15px] font-b">Rp{transaction.totalPayment.toLocaleString('id-ID')}</Text>
+                    </View>
+                    {/* Detail Button */}
+                    <View className="flex-row justify-end items-center border-bottom mt-[10]">
+                      <TouchableOpacity onPress={() => historyDetailPageHandler(transaction)} className="bg-[#5A4DF3] w-[80] py-[5] rounded-lg items-center">
+                        <Text className="text-white text-[15px] font-s pt-[3]">Detail</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </View>
               </View>
-            </View>
-          ))}
-        </View>
+            ))}
+          </View>
+        )}
       </ScrollView>
     </View>
   );

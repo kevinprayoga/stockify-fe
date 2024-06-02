@@ -1,12 +1,11 @@
-import React, { useState, useRef, useCallback } from "react";
-import { Text, View, ScrollView, TouchableOpacity } from "react-native";
+import React, { useState, useRef, useCallback, useEffect } from "react";
+import { Text, View, ScrollView, TouchableOpacity, RefreshControl } from "react-native";
 import { Feather, Ionicons, FontAwesome5, Entypo } from '@expo/vector-icons';
 import CustomBarChart from "../../components/CustomBarChart";
 import { API_URL, PORT } from '@env';
 import { Menu, Provider } from 'react-native-paper';
 import { useSession } from "@clerk/clerk-react";
 import { useUser } from "@clerk/clerk-expo";
-import { useFocusEffect } from "@react-navigation/native";
 import debounce from 'lodash.debounce';
 
 export default function Home() {
@@ -16,16 +15,17 @@ export default function Home() {
   const [totalProfit, setTotalProfit] = useState(0);
   const [totalProduct, setTotalProduct] = useState(0);
   const [emptyStockProd, setEmptyStockProd] = useState(0);
+  const [refreshing, setRefreshing] = useState(false); // State for refresh control
   const { session } = useSession();
   const { user } = useUser();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const dataCache = useRef({});
 
   const fetchData = useCallback(
-    debounce(async () => {
+    debounce(async (useCache = true) => {
       try {
         const cacheKey = `${user.id}-${selectedYear}`;
-        if (dataCache.current[cacheKey]) {
+        if (useCache && dataCache.current[cacheKey]) {
           const cachedData = dataCache.current[cacheKey];
           setData(cachedData.data);
           setTotalRevenue(cachedData.totalRevenue);
@@ -104,11 +104,14 @@ export default function Home() {
     [selectedYear, session, user.id] // Dependencies
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchData();
-    }, [selectedYear])
-  );
+  const handleRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchData(false).finally(() => setRefreshing(false));
+  }, [fetchData]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const formatCurrency = (amount) => {
     return amount.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }).replace(/,00$/, '');
@@ -126,7 +129,13 @@ export default function Home() {
     <Provider>
       <View className="bg-bg h-screen">
         <View className="flex h-screen">
-          <ScrollView className="flex mx-6 my-20" contentContainerStyle={{ paddingBottom: 40 }}>
+          <ScrollView
+            className="flex mx-6 my-20"
+            contentContainerStyle={{ paddingBottom: 40 }}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+            }
+          >
             <View>
               <Text className="font-m text-black text-2xl font-medium">Selamat datang, {user.firstName}!</Text>
               <Text className="font-r text-vSmallFont mt-0.5">Semangat Pagi!</Text>
