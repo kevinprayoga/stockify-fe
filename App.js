@@ -15,7 +15,6 @@ import BusinessInfo from "./src/LandingPage/BusinessInfo";
 
 import { config, closeConfig } from "./hooks/animation";
 import { AuthProvider, useAuth } from './src/context/AuthContext';
-import { API_URL, PORT } from '@env';
 
 const tokenCache = {
   getToken(key) {
@@ -31,7 +30,7 @@ const Stack = createNativeStackNavigator();
 async function fetchBusinessId(session, user) {
   try {
     const token = await session.getToken();
-    const response = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+    const response = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
       },

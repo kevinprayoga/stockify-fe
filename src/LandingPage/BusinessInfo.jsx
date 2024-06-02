@@ -4,7 +4,6 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
 import { useSession } from "@clerk/clerk-react";
 import { useUser } from "@clerk/clerk-expo";
-import { API_URL, PORT } from '@env';
 
 export default function BusinessInfo() {
   const [nameBisnis, setNameBisnis] = useState('');
@@ -43,7 +42,7 @@ export default function BusinessInfo() {
     try {
       const token = await session.getToken();
       /** Ganti Ip sesuai ip address network kalian di laptop masing2 */
-      const response = await fetch(`${API_URL}:${PORT}/business`, {
+      const response = await fetch(`${process.env.API_URL}:${process.env.PORT}/business`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

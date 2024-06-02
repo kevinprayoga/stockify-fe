@@ -4,7 +4,6 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { images } from "../../constants";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useAuth, useUser } from "@clerk/clerk-expo";
-import { API_URL, PORT } from '@env';
 import { useSession } from "@clerk/clerk-react";
 
 export default function Profile() {
@@ -25,7 +24,7 @@ export default function Profile() {
     try {
       const token = await session.getToken();
       /** Melakukan GET BusinessInfo */
-      const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+      const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },

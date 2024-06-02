@@ -7,7 +7,6 @@ import { useNavigation } from "@react-navigation/native";
 import { Formik } from 'formik';
 import { useSession } from "@clerk/clerk-react";
 import { useUser } from "@clerk/clerk-expo";
-import { API_URL, PORT } from '@env';
 
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../config/firebaseConfig";
@@ -81,7 +80,7 @@ export default function AddProduct() {
 
             const token = await session.getToken();
             /** Melakukan GET BusinessInfo */
-            const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+            const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -102,7 +101,7 @@ export default function AddProduct() {
                 image: value.image,
             };
             console.log('Payload:', payload);
-            const response = await fetch(`${API_URL}:${PORT}/business/product`, {
+            const response = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/product`, {
               method: 'POST',
               headers: {
                 'Authorization': `Bearer ${token}`,

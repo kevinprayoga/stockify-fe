@@ -4,7 +4,6 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
 import { useUser } from "@clerk/clerk-expo";
 import { useSession } from "@clerk/clerk-react";
-import { API_URL, PORT } from '@env';
 
 export default function MyAccount() {
   const [nameBisnis, setNameBisnis] = useState('');
@@ -27,7 +26,7 @@ export default function MyAccount() {
   const fetchBusinessData = async () => {
     try {
       const token = await session.getToken();
-      const response = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+      const response = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -72,7 +71,7 @@ export default function MyAccount() {
     try {
       const token = await session.getToken();
 
-      const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+      const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -85,7 +84,7 @@ export default function MyAccount() {
       const businessResult = await businessResponse.json();
       const businessId = businessResult.data[0].businessId;
 
-      const response = await fetch(`${API_URL}:${PORT}/business/${businessId}`, {
+      const response = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -4,7 +4,6 @@ import { useNavigation, useFocusEffect, useRoute } from "@react-navigation/nativ
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useSession } from "@clerk/clerk-react";
 import { useUser } from "@clerk/clerk-expo";
-import { API_URL, PORT } from '@env';
 import debounce from 'lodash.debounce';
 import { images } from '../../constants';
 
@@ -34,7 +33,7 @@ export default function Order() {
         const token = await session.getToken();
 
         /** Melakukan GET BusinessInfo */
-        const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+        const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
@@ -60,7 +59,7 @@ export default function Order() {
                 const token = await session.getToken();
 
                 /** Melakukan GET BusinessInfo */
-                const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+                const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },
@@ -72,7 +71,7 @@ export default function Order() {
                 const businessId = businessResult.data[0].businessId;
 
                 /** Melakukan GET Transaction Item Unorder */
-                const cartResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/transactionItem`, {
+                const cartResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}/transactionItem`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },
@@ -113,7 +112,7 @@ export default function Order() {
 
         try {
             /** Melakukan PUT TransactionItem */
-            const transactionItemResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/transactionItem/${transactionItemId}`, {
+            const transactionItemResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}/transactionItem/${transactionItemId}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -184,7 +183,7 @@ export default function Order() {
                 image: product.image,
             };
             console.log('Payload:', payload);
-            return fetch(`${API_URL}:${PORT}/business/${businessId}/product/${product.productId}`, {
+            return fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}/product/${product.productId}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -213,7 +212,7 @@ export default function Order() {
                 totalPayment: totalPayment,
             };
             console.log('Payload:', payload);
-            const transactionResponse = await fetch(`${API_URL}:${PORT}/business/transaction`, {
+            const transactionResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/transaction`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

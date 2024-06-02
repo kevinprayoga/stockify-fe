@@ -5,7 +5,6 @@ import { Octicons } from '@expo/vector-icons';
 import { useSession } from "@clerk/clerk-react";
 import { useUser } from "@clerk/clerk-expo";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import { API_URL, PORT } from '@env';
 import debounce from 'lodash.debounce';
 import { images } from "../../constants"; // Pastikan ini adalah jalur yang benar ke gambar
 
@@ -60,7 +59,7 @@ export default function Cart() {
         const token = await session.getToken();
 
         /** Melakukan GET BusinessInfo */
-        const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+        const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -72,7 +71,7 @@ export default function Cart() {
         const businessId = businessResult.data[0].businessId;
 
         /** Melakukan GET All Product */
-        const productResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/product?queryName=${query}`, {
+        const productResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}/product?queryName=${query}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -84,7 +83,7 @@ export default function Cart() {
         setProductResult(productResult.data);
 
         /** Melakukan GET Transaction Item Unorder */
-        const cartResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/transactionItem`, {
+        const cartResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}/transactionItem`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -144,7 +143,7 @@ export default function Cart() {
         const payload = {
           count: transactionItem.count + 1,
         };
-        const transactionItemResponse = await fetch(`${API_URL}:${PORT}/business/${item.businessId}/transactionItem/${transactionItem.transactionItemId}`, {
+        const transactionItemResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${item.businessId}/transactionItem/${transactionItem.transactionItemId}`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -180,7 +179,7 @@ export default function Cart() {
           image: item.image,
         };
         console.log('Payload:', payload);
-        const transactionItemResponse = await fetch(`${API_URL}:${PORT}/business/transactionItem`, {
+        const transactionItemResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/transactionItem`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,

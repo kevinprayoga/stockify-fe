@@ -7,7 +7,6 @@ import { Formik } from 'formik';
 import { images } from "../../constants";
 import { useSession } from "@clerk/clerk-react";
 import { useUser } from "@clerk/clerk-expo";
-import { API_URL, PORT } from '@env';
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../config/firebaseConfig";
 
@@ -112,7 +111,7 @@ export default function EditProduct() {
             }
 
             const token = await session.getToken();
-            const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+            const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -134,7 +133,7 @@ export default function EditProduct() {
                 image: value.image,
             };
 
-            const response = await fetch(`${API_URL}:${PORT}/business/${businessId}/product/${productId}`, {
+            const response = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}/product/${productId}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -159,7 +158,7 @@ export default function EditProduct() {
         try {
             const token = await session.getToken();
 
-            const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+            const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -172,7 +171,7 @@ export default function EditProduct() {
             const businessResult = await businessResponse.json();
             const businessId = businessResult.data[0].businessId;
 
-            const response = await fetch(`${API_URL}:${PORT}/business/${businessId}/product/${productId}`, {
+            const response = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}/product/${productId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -193,7 +192,7 @@ export default function EditProduct() {
     const fetchProductData = async () => {
         try {
             const token = await session.getToken();
-            const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+            const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -204,7 +203,7 @@ export default function EditProduct() {
             const businessResult = await businessResponse.json();
             const businessId = businessResult.data[0].businessId;
 
-            const productResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/product/${productId}`, {
+            const productResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}/product/${productId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },

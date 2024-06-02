@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useRef } from "react";
 import { Text, View, ScrollView, TouchableOpacity, Image } from "react-native";
-import { API_URL, PORT } from '@env';
 import { useSession } from "@clerk/clerk-react";
 import { useUser } from "@clerk/clerk-expo";
 import { useFocusEffect } from '@react-navigation/native';
@@ -11,7 +10,6 @@ export default function History({ navigation }) {
   const [transactionResult, setTransactionResult] = useState([]);
   const { session } = useSession();
   const { user } = useUser();
-  const dataCache = useRef(null);
 
   const fetchData = useCallback(
     debounce(async () => {
@@ -19,7 +17,7 @@ export default function History({ navigation }) {
         const token = await session.getToken();
 
         /** Melakukan GET BusinessInfo */
-        const businessResponse = await fetch(`${API_URL}:${PORT}/business/${user.id}`, {
+        const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -31,7 +29,7 @@ export default function History({ navigation }) {
         const businessId = businessResult.data[0].businessId;
 
         /** Melakukan GET All Transaction */
-        const transactionResponse = await fetch(`${API_URL}:${PORT}/business/${businessId}/transaction`, {
+        const transactionResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}/transaction`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
