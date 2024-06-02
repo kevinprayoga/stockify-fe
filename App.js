@@ -30,7 +30,7 @@ const Stack = createNativeStackNavigator();
 async function fetchBusinessId(session, user) {
   try {
     const token = await session.getToken();
-    const response = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
+    const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
       },

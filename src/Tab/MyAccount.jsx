@@ -26,7 +26,7 @@ export default function MyAccount() {
   const fetchBusinessData = async () => {
     try {
       const token = await session.getToken();
-      const response = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -71,7 +71,7 @@ export default function MyAccount() {
     try {
       const token = await session.getToken();
 
-      const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
+      const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -84,7 +84,7 @@ export default function MyAccount() {
       const businessResult = await businessResponse.json();
       const businessId = businessResult.data[0].businessId;
 
-      const response = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}`, {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

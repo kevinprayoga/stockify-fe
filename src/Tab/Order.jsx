@@ -33,7 +33,7 @@ export default function Order() {
         const token = await session.getToken();
 
         /** Melakukan GET BusinessInfo */
-        const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
+        const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
@@ -59,7 +59,7 @@ export default function Order() {
                 const token = await session.getToken();
 
                 /** Melakukan GET BusinessInfo */
-                const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
+                const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },
@@ -71,7 +71,7 @@ export default function Order() {
                 const businessId = businessResult.data[0].businessId;
 
                 /** Melakukan GET Transaction Item Unorder */
-                const cartResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}/transactionItem`, {
+                const cartResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/transactionItem`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },
@@ -112,7 +112,7 @@ export default function Order() {
 
         try {
             /** Melakukan PUT TransactionItem */
-            const transactionItemResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}/transactionItem/${transactionItemId}`, {
+            const transactionItemResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/transactionItem/${transactionItemId}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -183,7 +183,7 @@ export default function Order() {
                 image: product.image,
             };
             console.log('Payload:', payload);
-            return fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}/product/${product.productId}`, {
+            return fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/product/${product.productId}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -212,7 +212,7 @@ export default function Order() {
                 totalPayment: totalPayment,
             };
             console.log('Payload:', payload);
-            const transactionResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/transaction`, {
+            const transactionResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/transaction`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

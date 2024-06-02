@@ -80,7 +80,7 @@ export default function AddProduct() {
 
             const token = await session.getToken();
             /** Melakukan GET BusinessInfo */
-            const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
+            const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -101,7 +101,7 @@ export default function AddProduct() {
                 image: value.image,
             };
             console.log('Payload:', payload);
-            const response = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/product`, {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/product`, {
               method: 'POST',
               headers: {
                 'Authorization': `Bearer ${token}`,

@@ -30,7 +30,7 @@ export default function Stock() {
       const token = await session.getToken();
 
       /** Melakukan GET BusinessInfo */
-      const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
+      const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -42,7 +42,7 @@ export default function Stock() {
       const businessId = businessResult.data[0].businessId;
 
       /** Melakukan GET Semua Produk dengan query pencarian */
-      const productResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}/product?queryName=${query}`, {
+      const productResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/product?queryName=${query}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },

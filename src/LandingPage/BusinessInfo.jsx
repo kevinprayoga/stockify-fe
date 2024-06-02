@@ -42,7 +42,7 @@ export default function BusinessInfo() {
     try {
       const token = await session.getToken();
       /** Ganti Ip sesuai ip address network kalian di laptop masing2 */
-      const response = await fetch(`${process.env.API_URL}:${process.env.PORT}/business`, {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -111,7 +111,7 @@ export default function EditProduct() {
             }
 
             const token = await session.getToken();
-            const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
+            const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -133,7 +133,7 @@ export default function EditProduct() {
                 image: value.image,
             };
 
-            const response = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}/product/${productId}`, {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/product/${productId}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -158,7 +158,7 @@ export default function EditProduct() {
         try {
             const token = await session.getToken();
 
-            const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
+            const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -171,7 +171,7 @@ export default function EditProduct() {
             const businessResult = await businessResponse.json();
             const businessId = businessResult.data[0].businessId;
 
-            const response = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}/product/${productId}`, {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/product/${productId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -192,7 +192,7 @@ export default function EditProduct() {
     const fetchProductData = async () => {
         try {
             const token = await session.getToken();
-            const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
+            const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -203,7 +203,7 @@ export default function EditProduct() {
             const businessResult = await businessResponse.json();
             const businessId = businessResult.data[0].businessId;
 
-            const productResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}/product/${productId}`, {
+            const productResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/product/${productId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },

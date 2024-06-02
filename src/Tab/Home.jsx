@@ -38,7 +38,7 @@ export default function Home() {
         const token = await session.getToken();
 
         /** Melakukan GET BusinessInfo */
-        const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
+        const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -51,7 +51,7 @@ export default function Home() {
         console.log('Business ID:', businessId);
 
         /** Melakukan GET All Transaction */
-        const transactionResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}/transaction`, {
+        const transactionResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/transaction`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -72,7 +72,7 @@ export default function Home() {
         setTotalRevenue(yearlyTotalRevenue);
 
         /** Melakukan GET All Product */
-        const productResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}/product`, {
+        const productResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/product`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -111,7 +111,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchData();
-    console.log(process.env.API_URL, process.env.PORT);
+    console.log(process.env.EXPO_PUBLIC_API_URL, process.env.EXPO_PUBLIC_PORT);
   }, [fetchData]);
 
   const formatCurrency = (amount) => {

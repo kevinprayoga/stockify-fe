@@ -17,7 +17,7 @@ export default function History({ navigation }) {
         const token = await session.getToken();
 
         /** Melakukan GET BusinessInfo */
-        const businessResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${user.id}`, {
+        const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -29,7 +29,7 @@ export default function History({ navigation }) {
         const businessId = businessResult.data[0].businessId;
 
         /** Melakukan GET All Transaction */
-        const transactionResponse = await fetch(`${process.env.API_URL}:${process.env.PORT}/business/${businessId}/transaction`, {
+        const transactionResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/transaction`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
