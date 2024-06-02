@@ -2,7 +2,7 @@
 (belum masuk ke fase development expo)
 
 ## How to Start
-1. Install package yarn (rekomendasi)
+1. Install package yarn (wajib)
 ```
 yarn install
 ```
