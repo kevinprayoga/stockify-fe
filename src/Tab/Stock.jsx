@@ -131,7 +131,7 @@ export default function Stock() {
             <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
           }
         >
-          <View className="items-center mx-[20] mb-[130px]">
+          <View className="items-center mx-[20] mb-10">
             <View className="w-full flex-row flex-wrap justify-between">
               {productResult.map((product) => (
                 <View key={product.productId} className="w-1/2 h-[240] mb-[10]">

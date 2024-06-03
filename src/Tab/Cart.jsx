@@ -246,7 +246,7 @@ export default function Cart() {
             <Text className="text-gray-500 font-r mt-4">Mohon tambahkan produk!</Text>
           </View>
         ) : (
-          <View className={`items-center mx-[20] ${totalItems > 0 ? 'mb-[70px]' : 'mb-[130px]'}`}>
+          <View className={`items-center mx-[20] ${totalItems > 0 ? 'mb-[70px]' : 'mb-10'}`}>
             {/* Row 1 */}
             <View className="w-full flex-row flex-wrap justify-between">
               {/* Col 1 */}

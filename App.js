@@ -31,7 +31,6 @@ const Stack = createNativeStackNavigator();
 async function fetchBusinessId(session, user) {
   try {
     const token = await session.getToken();
-    console.log('Token:', token);
     const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -65,7 +64,6 @@ function SignedInNavigator() {
           setIsLoading(true);
           const id = await fetchBusinessId(session, user);
           setBusinessId(id);
-          console.log('Business ID1:', id);
           setIsLoading(false);
         }
       }
@@ -82,14 +80,10 @@ function SignedInNavigator() {
 
   useEffect(() => {
     if (!isLoading) {
-      console.log('Business ID2:', businessId);
       if (businessId === null) {
-        console.log('origin1:', origin)
         setOrigin('register');
-        console.log('origin3:', origin)
         nav.navigate('BusinessInfo');
       } else {
-        console.log('origin2:', origin)
         setOrigin('login');
         nav.navigate('TabHome');
       }

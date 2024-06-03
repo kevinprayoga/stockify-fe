@@ -137,7 +137,7 @@ export default function Order() {
                 // Perbarui state products dengan item yang diperbarui
                 setProducts(prevProducts => {
                     return prevProducts.map(product => 
-                        product.productName === nameItem ? { ...product, stock: product.stock - payload.count + (prevCart.find(cartItem => cartItem.transactionItemId === transactionItemId)?.count || 0) } : product
+                        product.productName === nameItem ? { ...product, stock: product.stock - payload.count + (cart.find(cartItem => cartItem.transactionItemId === transactionItemId)?.count || 0) } : product
                     );
                 });
             } else {
@@ -150,12 +150,15 @@ export default function Order() {
     };
 
     const incrementItemCount = async (item) => {
-        /** Melakukan PUT TransactionItem */
-        const payload = {
-            count: item.count + 1,
-        };
-        await updateItem(payload, item.transactionItemId, item.nameItem);
-        console.log("Incrementing item count");
+        const productStock = products.find(product => product.productName === item.nameItem).stock;
+        if (item.count < productStock) {
+            /** Melakukan PUT TransactionItem */
+            const payload = {
+                count: item.count + 1,
+            };
+            await updateItem(payload, item.transactionItemId, item.nameItem);
+            console.log("Incrementing item count");
+        }
     };
 
     const decrementItemCount = async (item) => {
@@ -251,7 +254,8 @@ export default function Order() {
                 {/* Tabel */}
                 <View className="mx-[27] mt-[30]">
                     {cart.map((item) => {
-                        const isAddDisabled = item.count >= item.stock;
+                        const productStock = products.find(product => product.productName === item.nameItem).stock;
+                        const isAddDisabled = item.count >= productStock;
                         return (
                             <View key={item.transactionItemId} className="flex-row justify-between my-[10]">
                                 <View className="flex-row">
