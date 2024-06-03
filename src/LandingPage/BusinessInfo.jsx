@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { Text, TextInput, TouchableOpacity, View, ScrollView, KeyboardAvoidingView, Platform, BackHandler } from "react-native";
+import { Text, TextInput, TouchableOpacity, View, ScrollView, KeyboardAvoidingView, Platform, BackHandler, ActivityIndicator, StyleSheet } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext";
 import { useSession } from "@clerk/clerk-react";
@@ -39,9 +39,10 @@ export default function BusinessInfo() {
       userID: user.id,
     };
 
+    setIsSubmitting(true); // Set isSubmitting to true when the submit starts
+
     try {
       const token = await session.getToken();
-      /** Ganti Ip sesuai ip address network kalian di laptop masing2 */
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business`, {
         method: 'POST',
         headers: {
@@ -50,12 +51,9 @@ export default function BusinessInfo() {
         },
         body: JSON.stringify(payload)
       });
-      console.log('Payload:');
       if (response.ok) {
         const responseData = await response.json();
         console.log('Response data:', responseData);
-        setIsSubmitting(true);
-        nav.push('TabHome');
         setSubmitPressed(false);
         setOrigin('login');
       } else {
@@ -66,6 +64,8 @@ export default function BusinessInfo() {
     } catch (error) {
       console.error('Error submitting form:', error);
       setErrorMessage('Gagal menyimpan data bisnis');
+    } finally {
+      setIsSubmitting(false); // Set isSubmitting to false after the submit is complete
     }
   };
 
@@ -161,7 +161,14 @@ export default function BusinessInfo() {
                   />
                 </View>
                 <TouchableOpacity onPress={handleSubmit} className="bg-primary mx-4 mt-8 py-4 rounded-lg shadow shadow-[#3A8DEC]">
-                  <Text className="font-s text-xl text-white font-semibold text-center">Simpan</Text>
+                  {isSubmitting ? (
+                    <View style={styles.loadingContainer}>
+                      <ActivityIndicator size="large" color="#0000ff" />
+                      <Text style={styles.loadingText}>Loading...</Text>
+                    </View>
+                  ) : (
+                    <Text className="font-s text-xl text-white font-semibold text-center">Simpan</Text>
+                  )}
                 </TouchableOpacity>
               </View>
             </ScrollView>
@@ -171,3 +178,15 @@ export default function BusinessInfo() {
     </KeyboardAvoidingView>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 20,
+    textAlign: 'center',
+  },
+});

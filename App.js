@@ -15,6 +15,7 @@ import BusinessInfo from "./src/LandingPage/BusinessInfo";
 
 import { config, closeConfig } from "./hooks/animation";
 import { AuthProvider, useAuth } from './src/context/AuthContext';
+import { get } from 'firebase/database';
 
 const tokenCache = {
   getToken(key) {
@@ -30,6 +31,7 @@ const Stack = createNativeStackNavigator();
 async function fetchBusinessId(session, user) {
   try {
     const token = await session.getToken();
+    console.log('Token:', token);
     const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -59,28 +61,40 @@ function SignedInNavigator() {
   useFocusEffect(
     useCallback(() => {
       async function getBusinessId() {
-        setIsLoading(true);
-        const id = await fetchBusinessId(session, user);
-        setBusinessId(id);
-        setIsLoading(false);
+        if (session && user) {
+          setIsLoading(true);
+          const id = await fetchBusinessId(session, user);
+          setBusinessId(id);
+          console.log('Business ID1:', id);
+          setIsLoading(false);
+        }
+      }
+      getBusinessId();
+      if (!businessId) {
+        setOrigin('register');
       }
 
-      getBusinessId();
-    }, [session, user])
+      if (businessId) {
+        setOrigin('login');
+      }
+    }, [session, user, origin, businessId])
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      if (isLoading) return;
+  useEffect(() => {
+    if (!isLoading) {
+      console.log('Business ID2:', businessId);
       if (businessId === null) {
+        console.log('origin1:', origin)
         setOrigin('register');
+        console.log('origin3:', origin)
         nav.navigate('BusinessInfo');
       } else {
+        console.log('origin2:', origin)
         setOrigin('login');
         nav.navigate('TabHome');
       }
-    }, [origin, businessId, isLoading, nav, setOrigin])
-  );
+    }
+  }, [businessId, isLoading, nav, setOrigin, origin]);
 
   if (isLoading) {
     return (

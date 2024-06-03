@@ -88,7 +88,7 @@ export default function Stock() {
 
   return (
     <View className="bg-[#F5F6F7] flex-1">
-      <View className="flex-row justify-between items-center mx-[27] mt-[50]">
+      <View className="flex-row justify-between items-center mx-[27] mt-16">
         <View>
           <Text className="text-[20px] font-s">Item ({totalProduct})</Text>
         </View>
@@ -105,7 +105,7 @@ export default function Stock() {
         </View>
       </View>
 
-      <View className="flex-row items-center bg-white rounded-lg px-4 shadow h-[45] mx-[27] mt-[30] mb-[10]">
+      <View className="flex-row items-center bg-white rounded-lg px-4 shadow h-[45] mx-[27] mt-[30] mb-10">
         <Octicons name="search" size={20} color="#9CA3AF" />
         <TextInput
           placeholder="Cari Produk"
@@ -117,7 +117,7 @@ export default function Stock() {
       </View>
 
       {productResult.length === 0 ? (
-        <View className="flex-1 justify-center items-center">
+        <View className="flex-1 justify-center items-center mb-20">
           <Image
             source={images.landing}
             className="w-32 h-10"

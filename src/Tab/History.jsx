@@ -79,15 +79,16 @@ export default function History({ navigation }) {
   };
 
   return (
-    <View className="bg-[#F5F6F7] flex-1">
-      <ScrollView className="mt-[50] bg-[#F5F6F7] flex-1">
+    <View className="relative bg-[#F5F6F7] flex-1">
+      <View className="fixed top-0 left-0 right-0 bg-[#F5F6F7] z-10 p-4 mt-12">
         <View className="justify-center items-center mx-[27] h-[50]">
           <Text className="text-2xl font-s">Riwayat</Text>
           <Text className="text-xl font-s">Transaksi</Text>
-        </View> 
-        
+        </View>
+      </View>
+      <ScrollView className={`bg-[#F5F6F7] flex-1 mt-10`}>
         {transactionResult.length === 0 ? (
-          <View className="flex-1 justify-center items-center mt-80">
+          <View className="flex-1 justify-center items-center mt-60">
             <Image
               source={images.landing}
               className="w-32 h-10"
@@ -95,7 +96,7 @@ export default function History({ navigation }) {
             <Text className="text-gray-500 font-r mt-4">Mohon lakukan transaksi!</Text>
           </View>
         ) : (
-          <View className="mt-[30] mb-[130px]">
+          <View className="mt-4 mb-[130px]">
             {transactionResult.map((transaction) => (
               <View key={transaction.transactionId} className="mb-[10] mx-[27] bg-white rounded-lg p-[15] shadow">
                 {/* ID & Date */}

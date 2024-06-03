@@ -2,6 +2,7 @@ import React from "react";
 import { ScrollView, Text, TouchableOpacity, View, Image, TextInput, ActivityIndicator } from "react-native";
 import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from 'formik';
@@ -29,7 +30,12 @@ export default function AddProduct() {
         });
 
         if (!result.canceled) {
-            setImage(result.assets[0].uri);
+            const compressedImage = await ImageManipulator.manipulateAsync(
+                result.assets[0].uri,
+                [{ resize: { width: 800 } }], // Resize to width 800, height will be adjusted automatically
+                { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+            );
+            setImage(compressedImage.uri);
         }
     };
 

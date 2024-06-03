@@ -111,7 +111,6 @@ export default function Home() {
 
   useEffect(() => {
     fetchData();
-    console.log(process.env.EXPO_PUBLIC_API_URL, process.env.EXPO_PUBLIC_PORT);
   }, [fetchData]);
 
   const formatCurrency = (amount) => {
@@ -129,19 +128,22 @@ export default function Home() {
   return (
     <Provider>
       <View className="bg-bg h-screen">
-        <View className="flex h-screen">
+        <View className="flex">
+          {/* Bagian yang tetap di tempat */}
+          <View className="mx-6 mt-20">
+            <Text className="font-m text-black text-2xl font-medium">Selamat datang, {user.firstName}!</Text>
+            <Text className="font-r text-vSmallFont mt-0.5">Semangat Pagi!</Text>
+            <View className="border-b border-slate-300 w-full my-4" />
+          </View>
+
+          {/* Bagian yang bisa digulir */}
           <ScrollView
-            className="flex mx-6 my-20"
-            contentContainerStyle={{ paddingBottom: 40 }}
+            className="flex mx-6 mb-60"
+            contentContainerStyle={{ paddingBottom: 60 }}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
             }
           >
-            <View>
-              <Text className="font-m text-black text-2xl font-medium">Selamat datang, {user.firstName}!</Text>
-              <Text className="font-r text-vSmallFont mt-0.5">Semangat Pagi!</Text>
-              <View className="border-b border-slate-300 w-full my-4" />
-            </View>
             <View className="flex justify-between mx-2 space-y-5">
               <View className="flex-row justify-between">
                 <View className="bg-indigo-300 p-3 rounded-2xl">

@@ -137,7 +137,7 @@ export default function Order() {
                 // Perbarui state products dengan item yang diperbarui
                 setProducts(prevProducts => {
                     return prevProducts.map(product => 
-                        product.productName === nameItem ? { ...product, stock: payload.count } : product
+                        product.productName === nameItem ? { ...product, stock: product.stock - payload.count + (prevCart.find(cartItem => cartItem.transactionItemId === transactionItemId)?.count || 0) } : product
                     );
                 });
             } else {
@@ -347,4 +347,4 @@ export default function Order() {
             </Modal>
         </View>
     );
-};
+}

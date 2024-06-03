@@ -113,6 +113,11 @@ export default function Cart() {
     }, [searchQuery])
   );
 
+  useEffect(() => {
+    setTotalItems(countTotalItem(cartResult));
+    setTotalPrice(countTotalPrice(cartResult));
+  }, [cartResult]);
+
   const countTotalItem = (cart) => {
     let totalItems = 0;
     cart.forEach((item) => {
@@ -161,8 +166,6 @@ export default function Cart() {
                 ? { ...cartItem, count: payload.count }
                 : cartItem
             );
-            setTotalItems(countTotalItem(updatedCart));
-            setTotalPrice(countTotalPrice(updatedCart));
             return updatedCart;
           });
         } else {
@@ -193,8 +196,6 @@ export default function Cart() {
           // Add new item to cartResult state
           setCartResult(prevCart => {
             const updatedCart = [...prevCart, { ...payload, transactionItemId: responseData.transactionItemId }];
-            setTotalItems(countTotalItem(updatedCart));
-            setTotalPrice(countTotalPrice(updatedCart));
             return updatedCart;
           });
         } else {
@@ -214,18 +215,12 @@ export default function Cart() {
 
   return (
     <View className="relative bg-[#F5F6F7] flex-1">
-      <ScrollView 
-        className={`mt-[50] bg-[#F5F6F7]  ${totalItems > 0 ? '' : 'h-screen'}`}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
-      >
-        <View className="justify-center items-center mx-[27] h-[50]">
+      <View className="fixed top-0 left-0 right-0 bg-[#F5F6F7] z-10 p-4 mt-12">
+        <View className="justify-center items-center mx-[27] h-[50] mb-5">
           <Text className="text-2xl font-s">Keranjang</Text>
           <Text className="text-xl font-s">Check Out</Text>
         </View>
-
-        <View className="flex-row items-center bg-white rounded-lg px-4 shadow h-[45] mx-[27] mt-[30] mb-[10]">
+        <View className="flex-row items-center bg-white rounded-lg px-4 shadow h-[45] mx-2.5 mt-[10] mb-6">
           <Octicons name="search" size={20} color="#9CA3AF"/>
           <TextInput
             placeholder="Cari Produk"
@@ -235,9 +230,15 @@ export default function Cart() {
             onChangeText={(text) => setSearchQuery(text)}
           />
         </View>
-
+      </View>
+      <ScrollView 
+        className={`bg-[#F5F6F7] ${totalItems > 0 ? '' : 'h-screen'}`}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+      >
         {productResult.length === 0 ? (
-          <View className="flex-1 justify-center items-center mt-64">
+          <View className="flex-1 justify-center items-center mt-48">
             <Image
               source={images.landing}
               className="w-32 h-10"
