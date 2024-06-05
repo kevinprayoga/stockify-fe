@@ -27,6 +27,12 @@
     },
     "production": {
       "channel": "production",
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "simulator": true
+      },
       "env": {
         "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_bWVhc3VyZWQtbW9uaXRvci0yNy5jbGVyay5hY2NvdW50cy5kZXYk",
         "EXPO_PUBLIC_API_URL": "http://54.179.41.197",
