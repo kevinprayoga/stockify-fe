@@ -67,11 +67,13 @@ export default function Login() {
     >
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View className="bg-bg h-screen">
-          <View className="flex items-center justify-center h-screen">
+          <View className="flex h-screen">
             <ScrollView className="flex mx-8 mt-20">
-              <TouchableOpacity title="Back" onPress={backHandler} className="rounded-full mr-72 p-1.5 bg-primary">
-                <Ionicons name="arrow-back" size={25} color="white" />
-              </TouchableOpacity>
+              <View className="flex-row">
+                <TouchableOpacity title="Back" onPress={backHandler} className="rounded-full p-1.5 bg-primary">
+                  <Ionicons name="arrow-back" size={25} color="white" />
+                </TouchableOpacity>
+              </View>
               <Text className="font-m text-black text-2xl font-medium mt-7">Masuk Akun</Text>
               <Text className="font-r text-vSmallFont text-base mt-0.5">Masuk sesuai akun Anda!</Text>
               {errorMessage ? (
