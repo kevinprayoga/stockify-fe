@@ -88,7 +88,7 @@ export default function History({ navigation }) {
       </View>
       <ScrollView className={`bg-[#F5F6F7] flex-1 mt-4`}>
         {transactionResult.length === 0 ? (
-          <View className="flex-1 justify-center items-center mt-60">
+          <View className="flex-1 justify-center items-center mt-64">
             <Image
               source={images.landing}
               className="w-32 h-10"

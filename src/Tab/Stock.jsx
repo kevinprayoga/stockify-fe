@@ -115,22 +115,21 @@ export default function Stock() {
           onChangeText={(text) => setSearchQuery(text)}
         />
       </View>
-
-      {productResult.length === 0 ? (
-        <View className="flex-1 justify-center items-center mb-20">
-          <Image
-            source={images.landing}
-            className="w-32 h-10"
-          />
-          <Text className="text-gray-500 font-r mt-4">Mohon tambahkan produk!</Text>
-        </View>
-      ) : (
-        <ScrollView
-          className="bg-[#F5F6F7]"
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-          }
-        >
+      <ScrollView
+        className="bg-[#F5F6F7]"
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+      >
+        {productResult.length === 0 ? (
+          <View className="flex-1 justify-center items-center mt-48">
+            <Image
+              source={images.landing}
+              className="w-32 h-10"
+            />
+            <Text className="text-gray-500 font-r mt-4">Mohon tambahkan produk!</Text>
+          </View>
+        ) : (
           <View className="items-center mx-[20] mb-10">
             <View className="w-full flex-row flex-wrap justify-between">
               {productResult.map((product) => (
@@ -158,8 +157,8 @@ export default function Stock() {
               ))}
             </View>
           </View>
-        </ScrollView>
-      )}
+        )}
+      </ScrollView>
     </View>
   );
 };
