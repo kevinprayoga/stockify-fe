@@ -100,7 +100,7 @@ export default function EditProduct() {
             value.stock = parseInt(value.stock);
             console.log('Value:', value);
 
-            if (value.image !== product.image) {
+            if (image) {
                 const respImage = await fetch(image);
                 const blob = await respImage.blob();
                 const storageRef = ref(storage, 'productStockify/' + Date.now() + '.jpg');
@@ -108,6 +108,7 @@ export default function EditProduct() {
                 await uploadBytes(storageRef, blob);
                 const downloadUrl = await getDownloadURL(storageRef);
                 value.image = downloadUrl;
+                console.log('Download URL:', downloadUrl);
             }
             
             if (!value.productName || !value.cost || !value.price || !value.stock || !value.image) {
