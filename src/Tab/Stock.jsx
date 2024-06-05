@@ -142,7 +142,7 @@ export default function Stock() {
                     <View className="mx-[10]">
                       <Text className="text-[18px] font-b">{product.productName}</Text>
                       <View className="flex-row">
-                        <Text className="font-s">{product.stock}</Text><Text className="font-r text-gray-500"> di stok</Text>
+                        <Text className={`font-s ${product.stock < 10 ? "text-red-500" : ""}`}>{product.stock}</Text><Text className="font-r text-gray-500"> di stok</Text>
                       </View>
                       <View className="flex-row items-center justify-between mt-[10]">
                         <Text className="text-[18px] font-s">Rp{product.price.toLocaleString('id-ID')}</Text>
