@@ -23,6 +23,7 @@
     "expo": "~51.0.11",
     "expo-auth-session": "^5.5.2",
     "expo-client": "^0.0.0",
+    "expo-dev-client": "~4.0.15",
     "expo-font": "~12.0.7",
     "expo-image-manipulator": "^12.0.5",
     "expo-image-picker": "^15.0.5",
