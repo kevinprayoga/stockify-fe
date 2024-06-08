@@ -43,14 +43,18 @@ export default function BusinessInfo() {
 
     try {
       const token = await session.getToken();
+      console.log('token:', token);
+      console.log(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business`);
+      console.log('payload:', payload.userID);
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload)
       });
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
       if (response.ok) {
         const responseData = await response.json();
         console.log('Response data:', responseData);
