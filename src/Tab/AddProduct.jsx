@@ -6,19 +6,17 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from 'formik';
-import { useSession } from "@clerk/clerk-react";
-import { useUser } from "@clerk/clerk-expo";
 
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../config/firebaseConfig";
+import useStore from '../context/store';
 
 export default function AddProduct() {
     const [image, setImage] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const userId = useStore(state => state.userId);
 
-    const { session } = useSession();
-    const { user } = useUser();
     const nav = useNavigation();
 
     const pickImage = async () => {
@@ -63,7 +61,7 @@ export default function AddProduct() {
             value.cost = parseInt(value.cost);
             value.price = parseInt(value.price);
             value.stock = parseInt(value.stock);
-            if (!value.productName || !value.cost || !value.price || !value.stock || !value.image) {
+            if (!value.productName || !value.cost || !value.price || !value.image) {
                 console.log('Data belum lengkap', value);
                 setErrorMessage('Semua field harus diisi');
                 setIsLoading(false);
@@ -84,13 +82,8 @@ export default function AddProduct() {
             value.image = downloadUrl;
             console.log('Value:', value);
 
-            const token = await session.getToken();
             /** Melakukan GET BusinessInfo */
-            const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
+            const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${userId}`);
             if (!businessResponse.ok) {
                 throw new Error("Failed to fetch business info");
             }
@@ -110,7 +103,6 @@ export default function AddProduct() {
             const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/product`, {
               method: 'POST',
               headers: {
-                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify(payload)
@@ -215,8 +207,8 @@ export default function AddProduct() {
                                         <View className="w-1/2 flex-row items-center justify-end mr-4">
                                             <TouchableOpacity 
                                                 onPress={() => decrementStock(values,setFieldValue)}
-                                                className={`mr-[10] w-[30px] h-[30px] bg-white border-[0.5px] border-gray-300 rounded-full items-center justify-center ${parseInt(values.stock) > 1 ? 'bg-[#17D183] border-white' : ''}`}
-                                                disabled={parseInt(values.stock) <= 1}
+                                                className={`mr-[10] w-[30px] h-[30px] bg-white border-[0.5px] border-gray-300 rounded-full items-center justify-center ${parseInt(values.stock) > 0 ? 'bg-[#17D183] border-white' : ''}`}
+                                                disabled={parseInt(values.stock) < 1}
                                             >
                                                 <AntDesign name="minus" size={15} color="black" className="p-[5]"/>
                                             </TouchableOpacity>

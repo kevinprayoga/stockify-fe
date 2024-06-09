@@ -1,41 +1,22 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
-import { ClerkProvider, SignedIn, SignedOut, useSession, useUser } from '@clerk/clerk-expo';
-import * as SecureStore from "expo-secure-store";
 import { NavigationContainer, useNavigation, useFocusEffect } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
 import Landing1 from "./src/LandingPage/Landing1";
 import Landing2 from "./src/LandingPage/Landing2";
 import Login from "./src/LandingPage/Login";
 import Register from "./src/LandingPage/Register";
 import TabNavigation from "./src/Navigation/TabNavigation";
 import BusinessInfo from "./src/LandingPage/BusinessInfo";
-
 import { config, closeConfig } from "./hooks/animation";
-import { AuthProvider, useAuth } from './src/context/AuthContext';
-import { get } from 'firebase/database';
-
-const tokenCache = {
-  getToken(key) {
-    return SecureStore.getItemAsync(key);
-  },
-  saveToken(key, value) {
-    return SecureStore.setItemAsync(key, value);
-  },
-};
+import useStore from './src/context/store';
 
 const Stack = createNativeStackNavigator();
 
-async function fetchBusinessId(session, user) {
+async function fetchBusinessId(userId) {
   try {
-    const token = await session.getToken();
-    const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${userId}`);
 
     if (!response.ok) {
       throw new Error("Gagal mengambil data bisnis");
@@ -50,45 +31,36 @@ async function fetchBusinessId(session, user) {
 }
 
 function SignedInNavigator() {
-  const { origin, setOrigin } = useAuth();
-  const { session } = useSession();
-  const { user } = useUser();
-  const [businessId, setBusinessId] = useState(null);
+  // const { user } = useAuth();
+  const userId = useStore(state => state.userId);
+  const businessId = useStore(state => state.businessId);
+  const [busId, setBusId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const nav = useNavigation();
 
   useFocusEffect(
     useCallback(() => {
       async function getBusinessId() {
-        if (session && user) {
+        if (userId) {
           setIsLoading(true);
-          const id = await fetchBusinessId(session, user);
-          setBusinessId(id);
+          const id = await fetchBusinessId(userId);
+          setBusId(id);
           setIsLoading(false);
         }
       }
       getBusinessId();
-      if (!businessId) {
-        setOrigin('register');
-      }
-
-      if (businessId) {
-        setOrigin('login');
-      }
-    }, [session, user, origin, businessId])
+    }, [userId, busId, businessId])
   );
 
   useEffect(() => {
     if (!isLoading) {
-      if (businessId === null) {
-        setOrigin('register');
+      if (busId === null) {
         nav.navigate('BusinessInfo');
       } else {
-        setOrigin('login');
         nav.navigate('TabHome');
       }
     }
-  }, [businessId, isLoading, nav, setOrigin, origin]);
+  }, [busId, isLoading]);
 
   if (isLoading) {
     return (
@@ -112,7 +84,7 @@ function SignedInNavigator() {
       headerMode="float"
       animation="fade"
     >
-      {businessId ? (
+      {busId ? (
         <Stack.Screen
           name="TabHome"
           component={TabNavigation}
@@ -167,50 +139,19 @@ function SignedOutNavigator() {
   );
 }
 
-const GetClerkToken = () => {
-  const { session } = useSession();
-  const [token, setToken] = useState(null);
+export default function App() {
+  const userId = useStore(state => state.userId);
 
   useEffect(() => {
-    const fetchToken = async () => {
-      if (session) {
-        const token = await session.getToken();
-        console.log('Clerk JWT:', token);
-        setToken(token);
-      }
-    };
-
-    fetchToken();
-  }, [session]);
+    console.log('user:', userId);
+  }, [userId]);
 
   return (
-    <View>
-      {/* {token ? (
-        <Text>Your Clerk token: {token}</Text>
-      ) : (
-        <Text>Loading token...</Text>
-      )} */}
-    </View>
-  );
-};
-
-export default function App() {
-  return (
-    <AuthProvider>
-      <ClerkProvider tokenCache={tokenCache} publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}>
-        <SignedIn>
-          <NavigationContainer>
-            <SignedInNavigator />
-            {/* <GetClerkToken /> */}
-          </NavigationContainer>
-        </SignedIn>
-        <SignedOut>
-          <NavigationContainer>
-            <SignedOutNavigator />
-          </NavigationContainer>
-        </SignedOut>
-      </ClerkProvider>
-    </AuthProvider>
+    // <AuthProvider>
+      <NavigationContainer>
+        {userId ? <SignedInNavigator /> : <SignedOutNavigator />}
+      </NavigationContainer>
+    // </AuthProvider>
   );
 }
 

@@ -28,7 +28,7 @@
       },
       "permissions": [
         "android.permission.RECORD_AUDIO",
-        "INTERNET"
+        "android.permission.INTERNET"
       ],
       "package": "com.kevinprayoga.stockify"
     },

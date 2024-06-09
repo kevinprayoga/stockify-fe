@@ -1,22 +1,21 @@
 import React, { useState } from "react";
-import { Text, View, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
+import { Text, View, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons, Feather } from '@expo/vector-icons';
-import { useSignIn, useSession } from "@clerk/clerk-expo";
-import { useAuth } from "../context/AuthContext";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../config/firebaseConfig";
+import { images } from "../../constants";
+import useStore from '../context/store';
 
 export default function Login() {
-  const { signIn, setActive, isLoaded } = useSignIn();
-  const { session } = useSession();
   const [emailAddress, setEmailAddress] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false); // State untuk visibilitas password
   const [submitPressed, setSubmitPressed] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-
-  const { setOrigin } = useAuth();
   const nav = useNavigation();
 
+  const setUserId = useStore(state => state.setUserId);
 
   const backHandler = () => {
     nav.navigate("Landing2");
@@ -24,27 +23,31 @@ export default function Login() {
   };
 
   const onSignInPress = async () => {
-    if (!isLoaded) {
-      return null;
-    }
-
     setSubmitPressed(true);
     setErrorMessage('');
 
     try {
-      if (!session) {
-        const completeSignIn = await signIn.create({
-          identifier: emailAddress,
-          password,
-        });
-        await setActive({ session: completeSignIn.createdSessionId });
-        console.log("User is signed in");
-        setOrigin('login');
-        setSubmitPressed(false);
-      }
+      const userCredential = await signInWithEmailAndPassword(auth, emailAddress, password);
+      const user = userCredential.user;
+      setUserId(user?.uid);
+      console.log("User is signed in:", user?.uid);
+      setSubmitPressed(false);
     } catch (err) {
       console.log(err);
       setErrorMessage('Email atau password salah');
+    }
+  };
+
+  const onPressGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      setUserId(user?.uid);
+      console.log("User signed in with Google:", user);
+    } catch (err) {
+      console.error("Error during Google sign-in:", err);
+      setErrorMessage('Gagal masuk dengan Google');
     }
   };
 
@@ -113,6 +116,13 @@ export default function Login() {
               <Text className="font-s text-vSmallFont text-small mt-3 text-center font-semibold">Belum punya akun?
                 <Text onPress={() => (nav.navigate("Register"))} className="text-primary font-semibold"> Daftar akun</Text>
               </Text>
+              <Text className="font-m text-mediumFont font-medium text-base text-center mt-5">ATAU</Text>
+              <TouchableOpacity onPress={onPressGoogle} className="shadow mt-5">
+                <Image 
+                  source={images.google}
+                  className='mx-auto'
+                />
+              </TouchableOpacity>
             </ScrollView>
           </View>
         </View>

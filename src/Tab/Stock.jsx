@@ -3,8 +3,7 @@ import { Image, TouchableOpacity, Text, View, TextInput, ScrollView, RefreshCont
 import { MaterialIcons, Octicons } from '@expo/vector-icons';
 import { images } from "../../constants";
 import { useNavigation } from "@react-navigation/native";
-import { useSession } from "@clerk/clerk-react";
-import { useUser } from "@clerk/clerk-expo";
+import useStore from "../context/store";
 import debounce from 'lodash.debounce';
 
 export default function Stock() {
@@ -13,13 +12,12 @@ export default function Stock() {
   const [searchQuery, setSearchQuery] = useState("");
   const [refreshing, setRefreshing] = useState(false); // State for refresh control
   const nav = useNavigation();
-  const { session } = useSession();
-  const { user } = useUser();
   const dataCache = useRef({});
+  const userId = useStore(state => state.userId);
 
   const fetchData = async (query = "", useCache = true) => {
     try {
-      const cacheKey = `${user.id}-${query}`;
+      const cacheKey = `${userId}-${query}`;
       if (useCache && dataCache.current[cacheKey]) {
         const cachedData = dataCache.current[cacheKey];
         setProductResult(cachedData.productResult);
@@ -27,14 +25,8 @@ export default function Stock() {
         return;
       }
 
-      const token = await session.getToken();
-
       /** Melakukan GET BusinessInfo */
-      const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${userId}`);
       if (!businessResponse.ok) {
         throw new Error("Gagal mengambil informasi bisnis");
       }
@@ -42,11 +34,7 @@ export default function Stock() {
       const businessId = businessResult.data[0].businessId;
 
       /** Melakukan GET Semua Produk dengan query pencarian */
-      const productResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/product?queryName=${query}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const productResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/product?queryName=${query}`);
       if (!productResponse.ok) {
         throw new Error("Gagal mengambil produk");
       }
@@ -66,7 +54,7 @@ export default function Stock() {
 
   const debouncedFetchData = useCallback(
     debounce((query) => fetchData(query), 300),
-    [session, user.id]
+    [userId]
   );
 
   useEffect(() => {

@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { TouchableOpacity, Text, View, TextInput, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
-import { useUser } from "@clerk/clerk-expo";
-import { useSession } from "@clerk/clerk-react";
+import useStore from "../context/store";
 
 export default function MyAccount() {
   const [nameBisnis, setNameBisnis] = useState('');
@@ -15,9 +14,9 @@ export default function MyAccount() {
   const [isEditing, setIsEditing] = useState(false);
   const [submitPressed, setSubmitPressed] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const { session } = useSession();
-  const { user } = useUser();
   const nav = useNavigation();
+
+  const userId = useStore(state => state.userId);
 
   useEffect(() => {
     fetchBusinessData();
@@ -25,12 +24,7 @@ export default function MyAccount() {
 
   const fetchBusinessData = async () => {
     try {
-      const token = await session.getToken();
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${userId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch business info");
       }
@@ -69,13 +63,7 @@ export default function MyAccount() {
     };
 
     try {
-      const token = await session.getToken();
-
-      const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${userId}`);
 
       if (!businessResponse.ok) {
         throw new Error("Failed to fetch business info");
@@ -87,7 +75,6 @@ export default function MyAccount() {
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)

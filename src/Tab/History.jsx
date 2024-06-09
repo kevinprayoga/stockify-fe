@@ -1,27 +1,19 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback } from "react";
 import { Text, View, ScrollView, TouchableOpacity, Image } from "react-native";
-import { useSession } from "@clerk/clerk-react";
-import { useUser } from "@clerk/clerk-expo";
 import { useFocusEffect } from '@react-navigation/native';
 import debounce from 'lodash.debounce';
 import { images } from "../../constants"; // Pastikan ini adalah jalur yang benar ke gambar
+import useStore from "../context/store";
 
 export default function History({ navigation }) {
   const [transactionResult, setTransactionResult] = useState([]);
-  const { session } = useSession();
-  const { user } = useUser();
+  const userId = useStore(state => state.userId);
 
   const fetchData = useCallback(
     debounce(async () => {
       try {
-        const token = await session.getToken();
-
         /** Melakukan GET BusinessInfo */
-        const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${userId}`);
         if (!businessResponse.ok) {
           throw new Error("Failed to fetch business info");
         }
@@ -29,11 +21,7 @@ export default function History({ navigation }) {
         const businessId = businessResult.data[0].businessId;
 
         /** Melakukan GET All Transaction */
-        const transactionResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/transaction`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const transactionResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/transaction`);
         if (!transactionResponse.ok) {
           throw new Error("Failed to fetch transactions");
         }
@@ -43,7 +31,7 @@ export default function History({ navigation }) {
         console.error("Error fetching data: ", error);
       }
     }, 300), // Debounce interval of 300 milliseconds
-    [session, user.id] // Dependencies
+    [userId] // Dependencies
   );
 
   useFocusEffect(

@@ -6,20 +6,17 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import { Formik } from 'formik';
 import { images } from "../../constants";
-import { useSession } from "@clerk/clerk-react";
-import { useUser } from "@clerk/clerk-expo";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../config/firebaseConfig";
+import useStore from '../context/store';
 
 export default function EditProduct() {
     const route = useRoute();
     const { productId } = route.params;
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const { session } = useSession();
     const [image, setImage] = useState(null);
     const nav = useNavigation();
-    const { user } = useUser();
     const [product, setProduct] = useState({
         productName: '',
         cost: '',
@@ -30,6 +27,8 @@ export default function EditProduct() {
     const [isSaveModalVisible, setIsSaveModalVisible] = useState(false);
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
     const [formValues, setFormValues] = useState(null);
+
+    const userId = useStore(state => state.userId);
 
     useFocusEffect(
         React.useCallback(() => {
@@ -111,18 +110,13 @@ export default function EditProduct() {
                 console.log('Download URL:', downloadUrl);
             }
             
-            if (!value.productName || !value.cost || !value.price || !value.stock || !value.image) {
+            if (!value.productName || !value.cost || !value.price || !value.image) {
                 setErrorMessage('Semua field harus diisi');
                 setIsLoading(false);
                 return;
             }
 
-            const token = await session.getToken();
-            const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
+            const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${userId}`);
 
             if (!businessResponse.ok) {
                 throw new Error("Failed to fetch business info");
@@ -139,11 +133,10 @@ export default function EditProduct() {
                 stock: value.stock,
                 image: value.image,
             };
-
+            console.log('Payload:', payload);
             const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/product/${productId}`, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(payload)
@@ -163,13 +156,7 @@ export default function EditProduct() {
 
     const handleDelete = async () => {
         try {
-            const token = await session.getToken();
-
-            const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
+            const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${userId}`);
 
             if (!businessResponse.ok) {
                 throw new Error("Failed to fetch business info");
@@ -180,9 +167,6 @@ export default function EditProduct() {
 
             const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/product/${productId}`, {
                 method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
             });
 
             if (response.ok) {
@@ -198,23 +182,14 @@ export default function EditProduct() {
 
     const fetchProductData = async () => {
         try {
-            const token = await session.getToken();
-            const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
+            const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${userId}`);
             if (!businessResponse.ok) {
                 throw new Error("Failed to fetch business info");
             }
             const businessResult = await businessResponse.json();
             const businessId = businessResult.data[0].businessId;
 
-            const productResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/product/${productId}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
+            const productResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/product/${productId}`);
 
             if (!productResponse.ok) {
                 throw new Error("Failed to fetch product info");
@@ -311,8 +286,8 @@ export default function EditProduct() {
                                         <View className="w-1/2 flex-row items-center justify-end mr-4">
                                             <TouchableOpacity 
                                                 onPress={() => decrementStock(values, setFieldValue)}
-                                                className={`mr-[10] w-[30px] h-[30px] bg-white border-[0.5px] border-gray-300 rounded-full items-center justify-center ${parseInt(values.stock) > 1 ? 'bg-[#17D183] border-white' : ''}`}
-                                                disabled={parseInt(values.stock) <= 1}
+                                                className={`mr-[10] w-[30px] h-[30px] bg-white border-[0.5px] border-gray-300 rounded-full items-center justify-center ${parseInt(values.stock) > 0 ? 'bg-[#17D183] border-white' : ''}`}
+                                                disabled={parseInt(values.stock) < 1}
                                             >
                                                 <AntDesign name="minus" size={15} color="black" className="p-[5]" />
                                             </TouchableOpacity>

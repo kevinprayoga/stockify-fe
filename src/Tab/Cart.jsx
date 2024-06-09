@@ -2,11 +2,10 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View, RefreshControl } from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { Octicons } from '@expo/vector-icons';
-import { useSession } from "@clerk/clerk-react";
-import { useUser } from "@clerk/clerk-expo";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import debounce from 'lodash.debounce';
 import { images } from "../../constants"; // Pastikan ini adalah jalur yang benar ke gambar
+import useStore from "../context/store";
 
 export default function Cart() {
   const [productResult, setProductResult] = useState([]);
@@ -17,9 +16,9 @@ export default function Cart() {
   const [refreshing, setRefreshing] = useState(false);
   const [items, setItems] = useState([]); // State baru untuk menyimpan item transaksi
   const nav = useNavigation();
-  const { session } = useSession();
-  const { user } = useUser();
   const dataCache = useRef({});
+
+  const userId = useStore(state => state.userId);
 
   useEffect(() => {
     console.log('Items:', items);
@@ -46,7 +45,7 @@ export default function Cart() {
   const fetchData = useCallback(
     debounce(async (query = '', useCache = true) => {
       try {
-        const cacheKey = `${user.id}-${query}`;
+        const cacheKey = `${userId}-${query}`;
         if (useCache && dataCache.current[cacheKey]) {
           const cachedData = dataCache.current[cacheKey];
           setProductResult(cachedData.productResult);
@@ -56,14 +55,8 @@ export default function Cart() {
           return;
         }
 
-        const token = await session.getToken();
-
         /** Melakukan GET BusinessInfo */
-        const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${userId}`);
         if (!businessResponse.ok) {
           throw new Error("Failed to fetch business info");
         }
@@ -71,11 +64,7 @@ export default function Cart() {
         const businessId = businessResult.data[0].businessId;
 
         /** Melakukan GET All Product */
-        const productResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/product?queryName=${query}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const productResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/product?queryName=${query}`);
         if (!productResponse.ok) {
           throw new Error("Failed to fetch products");
         }
@@ -83,11 +72,7 @@ export default function Cart() {
         setProductResult(productResult.data);
 
         /** Melakukan GET Transaction Item Unorder */
-        const cartResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/transactionItem`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const cartResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/transactionItem`);
         if (!cartResponse.ok) {
           throw new Error("Failed to fetch products");
         }
@@ -104,7 +89,7 @@ export default function Cart() {
         console.error("Error fetching data: ", error);
       }
     }, 300), // Debounce interval of 300 milliseconds
-    [session, user.id]
+    [userId]
   );
 
   useFocusEffect(
@@ -140,29 +125,31 @@ export default function Cart() {
 
   const addItemToCart = async (item) => {
     try {
-      const token = await session.getToken();
+      // Check if the item already exists in the cart
+      const existingCartItem = cartResult.find((cartItem) => cartItem.nameItem === item.productName);
 
-      if (cartResult.some((cartItem) => cartItem.nameItem === item.productName)) {
+      if (existingCartItem) {
         /** Melakukan PUT TransactionItem */
-        const transactionItem = cartResult.filter((cartItem) => cartItem.nameItem === item.productName)[0];
         const payload = {
-          count: transactionItem.count + 1,
+          count: existingCartItem.count + 1,
         };
-        const transactionItemResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${item.businessId}/transactionItem/${transactionItem.transactionItemId}`, {
+        console.log('id:', existingCartItem);
+
+        const transactionItemResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${item.businessId}/transactionItem/${existingCartItem.transactionItemId}`, {
           method: 'PUT',
           headers: {
-            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(payload)
         });
+
         if (transactionItemResponse.ok) {
           const responseData = await transactionItemResponse.json();
           console.log('Response data:', responseData);
           // Update cartResult state to reflect the new count
           setCartResult(prevCart => {
             const updatedCart = prevCart.map(cartItem =>
-              cartItem.transactionItemId === transactionItem.transactionItemId
+              cartItem.transactionItemId === existingCartItem.transactionItemId
                 ? { ...cartItem, count: payload.count }
                 : cartItem
             );
@@ -182,22 +169,19 @@ export default function Cart() {
           image: item.image,
         };
         console.log('Payload:', payload);
+
         const transactionItemResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/transactionItem`, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(payload)
         });
+
         if (transactionItemResponse.ok) {
           const responseData = await transactionItemResponse.json();
           console.log('Response data:', responseData);
-          // Add new item to cartResult state
-          setCartResult(prevCart => {
-            const updatedCart = [...prevCart, { ...payload, transactionItemId: responseData.transactionItemId }];
-            return updatedCart;
-          });
+          await fetchData(searchQuery, false);
         } else {
           const errorData = await transactionItemResponse.json();
           console.log('Error data:', errorData);
@@ -207,6 +191,7 @@ export default function Cart() {
       console.error('Error submitting transaction item:', error);
     }
   }
+
 
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
@@ -252,7 +237,7 @@ export default function Cart() {
               {/* Col 1 */}
               {productResult.map((product) => {
                 const cartItem = cartResult.find(item => item.nameItem === product.productName);
-                const isAddDisabled = cartItem && cartItem.count >= product.stock;
+                const isAddDisabled = cartItem && cartItem.count >= product.stock || product.stock === 0;
                 return (
                   <View key={product.productId} className="w-1/2 h-[240] mb-[10]">
                     <View className="bg-white h-full rounded-2xl mx-[5] shadow">

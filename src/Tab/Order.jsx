@@ -2,8 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import { ScrollView, Text, TouchableOpacity, View, Image, Modal } from "react-native";
 import { useNavigation, useFocusEffect, useRoute } from "@react-navigation/native";
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useSession } from "@clerk/clerk-react";
-import { useUser } from "@clerk/clerk-expo";
+import useStore from "../context/store";
 import debounce from 'lodash.debounce';
 import { images } from '../../constants';
 
@@ -13,11 +12,11 @@ export default function Order() {
     const { items } = route.params;
     const [cart, setCart] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const { session } = useSession();
-    const { user } = useUser();
     const dataCache = useRef({});
     const [products, setProducts] = useState(items);
     const [redirect, setRedirect] = useState(false);
+
+    const userId = useStore(state => state.userId);
 
     useEffect(() => {
         if (redirect && cart.length === 0) {
@@ -30,14 +29,8 @@ export default function Order() {
     };
 
     const getBusinessId = async () => {
-        const token = await session.getToken();
-
         /** Melakukan GET BusinessInfo */
-        const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            },
-        });
+        const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${userId}`);
         if (!businessResponse.ok) {
             throw new Error("Failed to fetch business info");
         }
@@ -49,21 +42,15 @@ export default function Order() {
     const fetchData = useCallback(
         debounce(async () => {
             try {
-                const cacheKey = `${user.id}-cart`;
+                const cacheKey = `${userId}-cart`;
                 if (dataCache.current[cacheKey]) {
                     const cachedData = dataCache.current[cacheKey];
                     setCart(cachedData.cart);
                     return;
                 }
 
-                const token = await session.getToken();
-
                 /** Melakukan GET BusinessInfo */
-                const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    },
-                });
+                const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${userId}`);
                 if (!businessResponse.ok) {
                     throw new Error("Failed to fetch business info");
                 }
@@ -71,11 +58,7 @@ export default function Order() {
                 const businessId = businessResult.data[0].businessId;
 
                 /** Melakukan GET Transaction Item Unorder */
-                const cartResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/transactionItem`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    },
-                });
+                const cartResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/transactionItem`);
                 if (!cartResponse.ok) {
                     throw new Error("Failed to fetch products");
                 }
@@ -89,7 +72,7 @@ export default function Order() {
                 console.error("Error fetching data: ", error);
             }
         }, 300), // Debounce interval of 300 milliseconds
-        [session, user.id]
+        [userId]
     );
 
     useFocusEffect(
@@ -107,15 +90,12 @@ export default function Order() {
     };
 
     const updateItem = async (payload, transactionItemId, nameItem) => {
-        const token = await session.getToken();
         const businessId = await getBusinessId();
-
         try {
             /** Melakukan PUT TransactionItem */
             const transactionItemResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/transactionItem/${transactionItemId}`, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(payload)
@@ -171,7 +151,6 @@ export default function Order() {
     };
 
     const updateProducts = async (cart) => {
-        const token = await session.getToken();
         const businessId = await getBusinessId();
         console.log('Products:', products);
         const updatePromises = products.map(product => {
@@ -189,7 +168,6 @@ export default function Order() {
             return fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/product/${product.productId}`, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(payload)
@@ -206,7 +184,6 @@ export default function Order() {
 
     const orderHandler = async (cart) => {
         try {
-            const token = await session.getToken();
             const businessId = await getBusinessId();
             const totalPayment = countTotalPrice(cart);
             /** Melakukan POST TransactionItem */
@@ -218,7 +195,6 @@ export default function Order() {
             const transactionResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/transaction`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(payload)

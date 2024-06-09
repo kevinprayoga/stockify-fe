@@ -1,9 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { Text, TextInput, TouchableOpacity, View, ScrollView, KeyboardAvoidingView, Platform, BackHandler, ActivityIndicator, StyleSheet } from "react-native";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import { useAuth } from "../context/AuthContext";
-import { useSession } from "@clerk/clerk-react";
-import { useUser } from "@clerk/clerk-expo";
+import { useFocusEffect } from "@react-navigation/native";
+import useStore from '../context/store';
 
 export default function BusinessInfo() {
   const [nameBisnis, setNameBisnis] = useState('');
@@ -15,10 +13,9 @@ export default function BusinessInfo() {
   const [submitPressed, setSubmitPressed] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false); // State untuk mengatur submit status
-  const { setOrigin } = useAuth();
-  const { session } = useSession();
-  const { user } = useUser();
-  const nav = useNavigation();
+
+  const userId = useStore(state => state.userId);
+  const setBusinessId = useStore(state => state.setBusinessId);
 
   const handleSubmit = async () => {
     setSubmitPressed(true);
@@ -36,16 +33,12 @@ export default function BusinessInfo() {
       city: kota,
       kecamatan: kecamatan,
       posCode: pos,
-      userID: user.id,
+      userID: userId,
     };
 
     setIsSubmitting(true); // Set isSubmitting to true when the submit starts
 
     try {
-      const token = await session.getToken();
-      console.log('token:', token);
-      console.log(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business`);
-      console.log('payload:', payload.userID);
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business`, {
         method: 'POST',
         headers: {
@@ -53,13 +46,11 @@ export default function BusinessInfo() {
         },
         body: JSON.stringify(payload)
       });
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
       if (response.ok) {
         const responseData = await response.json();
         console.log('Response data:', responseData);
+        setBusinessId(responseData.data.businessId);
         setSubmitPressed(false);
-        setOrigin('login');
       } else {
         const errorData = await response.json();
         console.log('Error data:', errorData);

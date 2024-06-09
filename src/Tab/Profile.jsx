@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Image, TouchableOpacity, Text, View, Modal, ScrollView } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 import { images } from "../../constants";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import { useAuth, useUser } from "@clerk/clerk-expo";
-import { useSession } from "@clerk/clerk-react";
+import { signOut } from "firebase/auth";
+import { auth } from "../../config/firebaseConfig";
+import useStore from '../context/store';
 
 export default function Profile() {
   const nav = useNavigation();
-  const { signOut, isLoaded } = useAuth();
-  const { user } = useUser();
   const [modalVisible, setModalVisible] = useState(false);
   const [businessName, setBusinessName] = useState('');
-  const { session } = useSession();
+  const [people, setPeople] = useState('');
+
+  const clearUserId = useStore(state => state.clearUserId);
+  const userId = useStore(state => state.userId);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -22,13 +24,15 @@ export default function Profile() {
 
   const fetchData = async () => {
     try {
-      const token = await session.getToken();
+      const userResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/user/${userId}`);
+      if (!userResponse.ok) {
+        throw new Error("Failed to fetch user info");
+      }
+      const userResult = await userResponse.json();
+      setPeople(userResult.data[0].username);
+
       /** Melakukan GET BusinessInfo */
-      const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${userId}`);
       if (!businessResponse.ok) {
         throw new Error("Failed to fetch business info");
       }
@@ -40,15 +44,19 @@ export default function Profile() {
   };
 
   const signOutHandler = () => {
-    if (!isLoaded) {
-      return null;
-    }
     setModalVisible(true);
   };
 
   const confirmSignOutHandler = async () => {
-    await signOut();
-    setModalVisible(false);
+    try {
+      await signOut(auth);
+      clearUserId();
+      console.log('userId:', userId)
+      setModalVisible(false);
+      nav.navigate("Landing2");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
   };
 
   const cancelSignOutHandler = () => {
@@ -81,7 +89,7 @@ export default function Profile() {
           </View>
         </View>
         <View className="flex ml-3">
-          <Text className="font-semibold text-2xl text-white">{user.fullName}</Text>
+          <Text className="font-semibold text-2xl text-white">{people}</Text>
           <Text className="font-semibold text-md text-white text-left">{businessName}</Text>
         </View>
       </View>

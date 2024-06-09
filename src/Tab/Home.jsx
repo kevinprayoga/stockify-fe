@@ -4,9 +4,8 @@ import { Feather, Ionicons, FontAwesome5, Entypo } from '@expo/vector-icons';
 import CustomBarChart from "../../components/CustomBarChart";
 
 import { Menu, Provider } from 'react-native-paper';
-import { useSession } from "@clerk/clerk-react";
-import { useUser } from "@clerk/clerk-expo";
 import debounce from 'lodash.debounce';
+import useStore from "../context/store";
 
 export default function Home() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -16,15 +15,16 @@ export default function Home() {
   const [totalProduct, setTotalProduct] = useState(0);
   const [emptyStockProd, setEmptyStockProd] = useState(0);
   const [refreshing, setRefreshing] = useState(false); // State for refresh control
-  const { session } = useSession();
-  const { user } = useUser();
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const dataCache = useRef({});
+  const [people, setPeople] = useState('');
+
+  const userId = useStore(state => state.userId);
 
   const fetchData = useCallback(
     debounce(async (useCache = true) => {
       try {
-        const cacheKey = `${user.id}-${selectedYear}`;
+        const cacheKey = `${userId}-${selectedYear}`;
         if (useCache && dataCache.current[cacheKey]) {
           const cachedData = dataCache.current[cacheKey];
           setData(cachedData.data);
@@ -35,14 +35,15 @@ export default function Home() {
           return;
         }
 
-        const token = await session.getToken();
+        const userResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/user/${userId}`);
+        if (!userResponse.ok) {
+          throw new Error("Failed to fetch user info");
+        }
+        const userResult = await userResponse.json();
+        setPeople(userResult.data[0].username);
 
         /** Melakukan GET BusinessInfo */
-        const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${user.id}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const businessResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${userId}`);
         if (!businessResponse.ok) {
           throw new Error("Failed to fetch business info");
         }
@@ -51,11 +52,7 @@ export default function Home() {
         console.log('Business ID:', businessId);
 
         /** Melakukan GET All Transaction */
-        const transactionResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/transaction`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const transactionResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/transaction`);
         if (!transactionResponse.ok) {
           throw new Error("Failed to fetch transactions");
         }
@@ -72,11 +69,7 @@ export default function Home() {
         setTotalRevenue(yearlyTotalRevenue);
 
         /** Melakukan GET All Product */
-        const productResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/product`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const productResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business/${businessId}/product`);
         if (!productResponse.ok) {
           throw new Error("Failed to fetch products");
         }
@@ -101,7 +94,7 @@ export default function Home() {
         console.error("Error fetching data: ", error);
       }
     }, 300), // Debounce interval of 300 milliseconds
-    [selectedYear, session, user.id] // Dependencies
+    [selectedYear, userId] // Dependencies
   );
 
   const handleRefresh = useCallback(() => {
@@ -131,7 +124,7 @@ export default function Home() {
         <View className="flex">
           {/* Bagian yang tetap di tempat */}
           <View className="mx-6 mt-20">
-            <Text className="font-m text-black text-2xl font-medium">Selamat datang, {user.firstName}!</Text>
+            <Text className="font-m text-black text-2xl font-medium">Selamat datang, {people}!</Text>
             <Text className="font-r text-vSmallFont mt-0.5">Semangat Pagi!</Text>
             <View className="border-b border-slate-300 w-full my-4" />
           </View>
