@@ -6,6 +6,7 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { signOut } from "firebase/auth";
 import { auth } from "../../config/firebaseConfig";
 import useStore from '../context/store';
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 export default function Profile() {
   const nav = useNavigation();
@@ -14,7 +15,9 @@ export default function Profile() {
   const [people, setPeople] = useState('');
 
   const clearUserId = useStore(state => state.clearUserId);
+  const clearUserGoogleId = useStore(state => state.clearUserGoogleId);
   const userId = useStore(state => state.userId);
+  const userGoogleId = useStore(state => state.userGoogleId);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -49,7 +52,13 @@ export default function Profile() {
 
   const confirmSignOutHandler = async () => {
     try {
-      await signOut(auth);
+      if (!userGoogleId) {
+        await signOut(auth);
+      } else {
+        await GoogleSignin.revokeAccess();
+        await GoogleSignin.signOut();
+        clearUserGoogleId();
+      }
       clearUserId();
       console.log('userId:', userId)
       setModalVisible(false);

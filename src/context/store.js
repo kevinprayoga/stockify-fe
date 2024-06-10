@@ -8,10 +8,13 @@ const useStore = create(
     (set) => ({
       userId: null,
       businessId: null,
+      userGoogleId: null,
       setUserId: (id) => set({ userId: id }),
       clearUserId: () => set({ userId: null }),
       setBusinessId: (id) => set({ businessId: id }),
       clearBusinessId: () => set({ businessId: null }),
+      setUserGoogleId: (id) => set({ userGoogleId: id }),
+      clearUserGoogleId: () => set({ userGoogleId: null }),
     }),
     {
       name: 'user-store',

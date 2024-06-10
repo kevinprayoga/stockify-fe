@@ -3,6 +3,10 @@ import { Text, TextInput, TouchableOpacity, View, ScrollView, KeyboardAvoidingVi
 import { useFocusEffect } from "@react-navigation/native";
 import useStore from '../context/store';
 
+// import { GoogleSignin } from "@react-native-google-signin/google-signin";
+// import { signOut } from "firebase/auth";
+// import { auth } from "../../config/firebaseConfig";
+
 export default function BusinessInfo() {
   const [nameBisnis, setNameBisnis] = useState('');
   const [alamat, setAlamat] = useState('');
@@ -17,7 +21,16 @@ export default function BusinessInfo() {
   const userId = useStore(state => state.userId);
   const setBusinessId = useStore(state => state.setBusinessId);
 
+  // const clearUserId = useStore(state => state.clearUserId);
+  // const clearUserGoogleId = useStore(state => state.clearUserGoogleId);
+  // const userGoogleId = useStore(state => state.userGoogleId);
+
   const handleSubmit = async () => {
+    // await GoogleSignin.revokeAccess();
+    // await GoogleSignin.signOut();
+    // clearUserGoogleId();
+    // await signOut(auth);
+    // clearUserId();
     setSubmitPressed(true);
     setErrorMessage('');
 
@@ -35,8 +48,7 @@ export default function BusinessInfo() {
       posCode: pos,
       userID: userId,
     };
-
-    setIsSubmitting(true); // Set isSubmitting to true when the submit starts
+    console.log('Payload:', payload);
 
     try {
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/business`, {
@@ -46,6 +58,7 @@ export default function BusinessInfo() {
         },
         body: JSON.stringify(payload)
       });
+      console.log('Response:', response);
       if (response.ok) {
         const responseData = await response.json();
         console.log('Response data:', responseData);

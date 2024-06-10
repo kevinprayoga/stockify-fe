@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Text, View, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons, Feather } from '@expo/vector-icons';
@@ -6,6 +6,7 @@ import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 
 import { auth } from "../../config/firebaseConfig";
 import { images } from "../../constants";
 import useStore from '../context/store';
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 export default function Login() {
   const [emailAddress, setEmailAddress] = useState('');
@@ -16,6 +17,28 @@ export default function Login() {
   const nav = useNavigation();
 
   const setUserId = useStore(state => state.setUserId);
+  const setUserGoogleId = useStore(state => state.setUserGoogleId);
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: '350457007464-fnvc0ggq4qvmpdkefg8uefk2jgev3pd4.apps.googleusercontent.com',
+    });
+  }, []);
+
+  const googleSignIn = async () => {
+    try {
+      console.log("Google sign-in pressed");
+      await GoogleSignin.hasPlayServices();
+      console.log("Play services available")
+      const user = await GoogleSignin.signIn();
+      console.log("User signed in with Google:", user);
+      setUserId(user?.user.id);
+      setUserGoogleId(user?.user.id);
+    } catch (error) {
+      console.error("OAuth error", error);
+      setErrorMessage('Terjadi kesalahan saat mendaftar dengan Google.');
+    }
+  };
 
   const backHandler = () => {
     nav.navigate("Landing2");
@@ -38,18 +61,18 @@ export default function Login() {
     }
   };
 
-  const onPressGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      setUserId(user?.uid);
-      console.log("User signed in with Google:", user);
-    } catch (err) {
-      console.error("Error during Google sign-in:", err);
-      setErrorMessage('Gagal masuk dengan Google');
-    }
-  };
+  // const onPressGoogle = async () => {
+  //   const provider = new GoogleAuthProvider();
+  //   try {
+  //     const result = await signInWithPopup(auth, provider);
+  //     const user = result.user;
+  //     setUserId(user?.uid);
+  //     console.log("User signed in with Google:", user);
+  //   } catch (err) {
+  //     console.error("Error during Google sign-in:", err);
+  //     setErrorMessage('Gagal masuk dengan Google');
+  //   }
+  // };
 
   const getInputStyle = (inputValue) => {
     return inputValue || !submitPressed
@@ -117,7 +140,7 @@ export default function Login() {
                 <Text onPress={() => (nav.navigate("Register"))} className="text-primary font-semibold"> Daftar akun</Text>
               </Text>
               <Text className="font-m text-mediumFont font-medium text-base text-center mt-5">ATAU</Text>
-              <TouchableOpacity onPress={onPressGoogle} className="shadow mt-5">
+              <TouchableOpacity onPress={googleSignIn} className="mt-5">
                 <Image 
                   source={images.google}
                   className='mx-auto'

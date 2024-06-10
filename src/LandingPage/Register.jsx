@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View, ScrollView, KeyboardAvoidingView, Platform, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons, Feather } from '@expo/vector-icons';
@@ -7,6 +7,7 @@ import { images } from "../../constants";
 import { auth } from "../../config/firebaseConfig";
 import useStore from '../context/store';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 export default function Register() {
   const [username, setUsername] = useState('');
@@ -18,21 +19,32 @@ export default function Register() {
   const [errorMessage, setErrorMessage] = useState('');
 
   const setUserId = useStore(state => state.setUserId);
+  const setUserGoogleId = useStore(state => state.setUserGoogleId);
 
   const nav = useNavigation();
 
-  const onPressGoogle = async () => {
-    const provider = new GoogleAuthProvider();
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: '350457007464-fnvc0ggq4qvmpdkefg8uefk2jgev3pd4.apps.googleusercontent.com',
+    });
+  }, []);
+
+  const googleSignUp = async () => {
     try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      setUserId(user?.uid);
+      console.log("Google sign-in pressed");
+      await GoogleSignin.hasPlayServices();
+      console.log("Play services available")
+      const user = await GoogleSignin.signIn();
+      console.log("User signed in with Google:", user);
+      setUserId(user?.user.id);
+      setUserGoogleId(user?.user.id);
 
       const payload = {
-        userID: user.uid,
-        username: user.displayName,
-        email: user.email,
+        userID: user?.user.id,
+        username: user?.user.name,
+        email: user?.user.email,
       };
+      console.log("Payload:", payload);
 
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/user`, {
         method: "POST",
@@ -51,11 +63,47 @@ export default function Register() {
         console.error('Error data:', errorData);
         setErrorMessage('Gagal membuat akun');
       }
-    } catch (err) {
-      console.error("OAuth error", err);
+    } catch (error) {
+      console.error("OAuth error", error);
       setErrorMessage('Terjadi kesalahan saat mendaftar dengan Google.');
     }
   };
+
+  // const onPressGoogle = async () => {
+  //   const provider = new GoogleAuthProvider();
+  //   try {
+  //     const result = await signInWithPopup(auth, provider);
+  //     const user = result.user;
+  //     setUserId(user?.uid);
+
+  //     const payload = {
+  //       userID: user.uid,
+  //       username: user.displayName,
+  //       email: user.email,
+  //     };
+
+  //     const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}:${process.env.EXPO_PUBLIC_PORT}/user`, {
+  //       method: "POST",
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       },
+  //       body: JSON.stringify(payload)
+  //     })
+  //     if (response.ok) {
+  //       setSubmitPressed(false);
+  //       console.log("User registered and username saved!");
+  //       const responseData = await response.json();
+  //       console.log('Response data:', responseData);
+  //     } else {
+  //       const errorData = await response.json();
+  //       console.error('Error data:', errorData);
+  //       setErrorMessage('Gagal membuat akun');
+  //     }
+  //   } catch (err) {
+  //     console.error("OAuth error", err);
+  //     setErrorMessage('Terjadi kesalahan saat mendaftar dengan Google.');
+  //   }
+  // };
 
   const backHandler = () => {
     nav.navigate("Landing2");
@@ -192,7 +240,7 @@ export default function Register() {
                 <Text className="font-s text-xl text-white font-semibold text-center">Daftar</Text>
               </TouchableOpacity>
               <Text className="font-m text-mediumFont font-medium text-base text-center mt-5">ATAU</Text>
-              <TouchableOpacity onPress={onPressGoogle} className="shadow mt-5">
+              <TouchableOpacity onPress={googleSignUp} className="mt-5">
                 <Image 
                   source={images.google}
                   className='mx-auto'

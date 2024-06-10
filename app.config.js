@@ -1,4 +1,4 @@
-{
+export default{
   "expo": {
     "name": "stockify",
     "slug": "stockify",
@@ -19,7 +19,8 @@
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
         }
-      }
+      },
+      "googleServicesFile": process.env.GOOGLE_SERVICES_INFOPLIST
     },
     "android": {
       "adaptiveIcon": {
@@ -30,7 +31,8 @@
         "android.permission.RECORD_AUDIO",
         "android.permission.INTERNET"
       ],
-      "package": "com.kevinprayoga.stockify"
+      "package": "com.kevinprayoga.stockify",
+      "googleServicesFile": process.env.GOOGLE_SERVICES_ANDROID
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -51,7 +53,8 @@
             "usesCleartextTraffic": true
           }
         }
-      ]
+      ],
+      "@react-native-google-signin/google-signin"
     ],
     "extra": {
       "eas": {
